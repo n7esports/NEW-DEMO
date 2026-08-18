@@ -1,0 +1,71 @@
+.wrap {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+}
+
+.canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.balloonRow {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.decorBalloon {
+  position: absolute;
+  bottom: -140px;
+  width: 46px;
+  height: 58px;
+  border-radius: 50% 50% 50% 50% / 55% 55% 45% 45%;
+  opacity: 0.85;
+  animation: floatUp 7s ease-in infinite;
+}
+
+.decorBalloon::after {
+  content: '';
+  position: absolute;
+  bottom: -28px;
+  left: 50%;
+  width: 1px;
+  height: 28px;
+  background: rgba(255, 255, 255, 0.35);
+}
+
+@keyframes floatUp {
+  0% {
+    transform: translateY(0) translateX(0);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.85;
+  }
+  100% {
+    transform: translateY(-115vh) translateX(20px);
+    opacity: 0;
+  }
+}
+
+.skip {
+  position: absolute;
+  bottom: var(--spacing-xl);
+  right: var(--spacing-xl);
+  background: var(--color-glass-bg);
+  border: 1px solid var(--color-glass-border);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  color: white;
+  padding: var(--spacing-sm) var(--spacing-lg);
+  border-radius: 999px;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.skip:hover {
+  background: rgba(255, 255, 255, 0.14);
+}
