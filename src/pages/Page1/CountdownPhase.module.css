@@ -125,3 +125,41 @@
     display: none;
   }
 }
+.skipButton {
+  margin-top: 24px;
+  padding: 10px 28px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.7);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 50px;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: inherit;
+  position: relative;
+  z-index: 10;
+}
+
+.skipButton:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.2);
+  transform: scale(1.03);
+  box-shadow: 0 0 20px rgba(255, 46, 147, 0.1);
+}
+
+.skipButton:active {
+  transform: scale(0.97);
+}
+
+@media (max-width: 480px) {
+  .skipButton {
+    padding: 8px 20px;
+    font-size: 11px;
+    margin-top: 16px;
+  }
+}
