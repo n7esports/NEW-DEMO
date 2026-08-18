@@ -125,3 +125,50 @@
     display: none;
   }
 }
+
+import React, { useState, useEffect } from 'react';
+
+interface CountdownPhaseProps {
+  onComplete?: () => void;
+}
+
+const CountdownPhase: React.FC<CountdownPhaseProps> = ({ onComplete }) => {
+  const [countdown, setCountdown] = useState(10);
+
+  useEffect(() => {
+    if (countdown === 0) {
+      onComplete?.();
+      return;
+    }
+
+    const timer = setInterval(() => {
+      setCountdown(prev => prev - 1);
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [countdown, onComplete]);
+
+  const handleSkip = () => {
+    setCountdown(0);
+    onComplete?.();
+  };
+
+  return (
+    <div className="wrap" data-parity={countdown % 2 === 0 ? 'even' : 'odd'}>
+      <div className="number">{countdown}</div>
+      <p className="label">
+        {countdown > 1 ? 'seconds remaining' : 'second remaining'}
+      </p>
+      
+      {/* ADD THE DEV BUTTON HERE - Right after the label */}
+      <button 
+        className="skipButton"
+        onClick={handleSkip}
+      >
+        Dev: Skip Timing
+      </button>
+    </div>
+  );
+};
+
+export default CountdownPhase;
