@@ -20,12 +20,13 @@ const CakeAssembly: React.FC = () => {
         }
 
         body {
-          background: transparent;
+          background: #1c1a24;
           display: flex;
           justify-content: center;
           align-items: center;
           min-height: 100vh;
           margin: 0;
+          font-family: 'Lato', sans-serif;
         }
       `}</style>
 
@@ -394,7 +395,7 @@ const styles: { [key: string]: React.CSSProperties } = {
     alignItems: "center",
     minHeight: "100vh",
     width: "100%",
-    background: "transparent",
+    background: "#1c1a24",
   },
   cake: {
     display: "block",
