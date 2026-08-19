@@ -47,14 +47,14 @@ body {
 }
 
 /* ==============================================
-   CANDLE DROP ANIMATION
+   CANDLE - FIXED 'T' SHAPE ARTIFACT
    ============================================== */
 
 .velas {
   background: #ffffff;
   border-radius: 10px;
   position: absolute;
-  top: 378px; /* Positioned on top of frosting */
+  top: 378px;
   left: 50%;
   margin-left: -2.4px;
   margin-top: -8.33333333px;
@@ -67,30 +67,50 @@ body {
   z-index: 10;
 }
 
-/* Red stripes - hidden initially, fade in after candle lands */
+/* 
+   🔥 FIX: Hide pseudo-elements completely until candle lands
+   No stripes visible during the drop animation
+*/
 .velas:before,
 .velas:after {
-  opacity: 0;
-  animation: fadeInStripes 300ms 6.3s ease forwards;
-}
-
-.velas:after,
-.velas:before {
-  background: rgba(255, 0, 0, 0.5);
   content: "";
   position: absolute;
   width: 100%;
   height: 2.22222222px;
+  background: rgba(255, 0, 0, 0.5);
+  opacity: 0; /* 👈 Hidden initially */
+  pointer-events: none;
+}
+
+/* 
+   Stripes fade in ONLY after the candle has fully landed
+   Using animation-delay to match dropIn completion
+*/
+.velas:before {
+  top: 45%;
+  left: 0;
+  animation: fadeInStripes 400ms 6.3s ease forwards;
 }
 
 .velas:after {
   top: 25%;
   left: 0;
+  animation: fadeInStripes 400ms 6.3s ease forwards;
 }
 
-.velas:before {
-  top: 45%;
-  left: 0;
+/* 
+   Fade in animation for stripes
+   Smooth opacity transition from 0 to 1
+*/
+@keyframes fadeInStripes {
+  0% {
+    opacity: 0;
+    transform: scaleX(0.5);
+  }
+  100% {
+    opacity: 1;
+    transform: scaleX(1);
+  }
 }
 
 /* ==============================================
@@ -100,27 +120,18 @@ body {
 @keyframes dropIn {
   0% {
     opacity: 0;
-    transform: translateY(-300px);
+    transform: translateY(-300px) scaleX(1);
   }
-  60% {
+  50% {
     opacity: 1;
-    transform: translateY(10px);
+    transform: translateY(15px) scaleX(1);
   }
-  80% {
-    transform: translateY(-5px);
+  70% {
+    transform: translateY(-5px) scaleX(1);
   }
   100% {
     opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes fadeInStripes {
-  0% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
+    transform: translateY(0) scaleX(1);
   }
 }
 
@@ -176,7 +187,7 @@ body {
 }
 
 /* ==============================================
-   TEXT (Optional - if you want to keep it)
+   TEXT (Optional)
    ============================================== */
 
 .text {
