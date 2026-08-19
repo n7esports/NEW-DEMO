@@ -13,28 +13,48 @@ body {
 }
 
 body {
-  background: #ee9ca7;
+  background: #1c1a24;
   display: flex;
   justify-content: center;
   align-items: center;
   min-height: 100vh;
   margin: 0;
+  font-family: 'Lato', sans-serif;
 }
+
+/* ==============================================
+   WRAPPER - Shared container for candle + SVG
+   ============================================== */
+
+.cake-wrapper {
+  position: relative;
+  width: 200px;
+  height: 500px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* ==============================================
+   CAKE SVG
+   ============================================== */
 
 #cake {
   display: block;
   position: relative;
-  margin: -10em auto 0 auto;
+  width: 100%;
+  height: 100%;
 }
 
-/* ============================================== Candle
-*/
+/* ==============================================
+   CANDLE DROP ANIMATION
+   ============================================== */
 
 .velas {
   background: #ffffff;
   border-radius: 10px;
   position: absolute;
-  top: 228px;
+  top: 378px; /* Positioned on top of frosting */
   left: 50%;
   margin-left: -2.4px;
   margin-top: -8.33333333px;
@@ -42,25 +62,21 @@ body {
   height: 35px;
   transform: translateY(-300px);
   backface-visibility: hidden;
-  animation: in 500ms 6s ease-out forwards;
+  opacity: 0;
+  animation: dropIn 600ms 5.5s ease-out forwards;
+  z-index: 10;
 }
 
-/* Hide pseudo-elements until animation completes */
+/* Red stripes - hidden initially, fade in after candle lands */
 .velas:before,
 .velas:after {
   opacity: 0;
-  animation: showStripes 0.3s 6.5s ease forwards;
-}
-
-@keyframes showStripes {
-  to {
-    opacity: 1;
-  }
+  animation: fadeInStripes 300ms 6.3s ease forwards;
 }
 
 .velas:after,
 .velas:before {
-  background: rgba(255, 0, 0, 0.4);
+  background: rgba(255, 0, 0, 0.5);
   content: "";
   position: absolute;
   width: 100%;
@@ -77,8 +93,40 @@ body {
   left: 0;
 }
 
-/* ============================================== Fire
-*/
+/* ==============================================
+   CANDLE DROP KEYFRAMES
+   ============================================== */
+
+@keyframes dropIn {
+  0% {
+    opacity: 0;
+    transform: translateY(-300px);
+  }
+  60% {
+    opacity: 1;
+    transform: translateY(10px);
+  }
+  80% {
+    transform: translateY(-5px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInStripes {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+/* ==============================================
+   FLAME ANIMATION
+   ============================================== */
 
 .fuego {
   border-radius: 100%;
@@ -88,58 +136,74 @@ body {
   margin-left: -2.6px;
   width: 6.66666667px;
   height: 18px;
+  opacity: 0;
 }
 
+/* Flame starts AFTER candle lands (6.3s + small delay) */
 .fuego:nth-child(1) {
-  animation: fuego 2s 6.5s infinite;
+  animation: fuego 2s 6.6s infinite;
 }
-
 .fuego:nth-child(2) {
-  animation: fuego 1.5s 6.5s infinite;
+  animation: fuego 1.5s 6.6s infinite;
 }
-
 .fuego:nth-child(3) {
-  animation: fuego 1s 6.5s infinite;
+  animation: fuego 1s 6.6s infinite;
 }
-
 .fuego:nth-child(4) {
-  animation: fuego 0.5s 6.5s infinite;
+  animation: fuego 0.5s 6.6s infinite;
 }
-
 .fuego:nth-child(5) {
-  animation: fuego 0.2s 6.5s infinite;
+  animation: fuego 0.2s 6.6s infinite;
 }
 
-/* ============================================== Animation Fire
-*/
+/* ==============================================
+   FLAME KEYFRAMES
+   ============================================== */
 
 @keyframes fuego {
   0%, 100% {
-    background: rgba(254, 248, 97, 0.5);
-    box-shadow: 0 0 40px 10px rgba(248, 233, 209, 0.2);
+    opacity: 1;
+    background: rgba(254, 248, 97, 0.8);
+    box-shadow: 0 0 20px 5px rgba(248, 233, 209, 0.4);
     transform: translateY(0) scale(1);
   }
   50% {
-    background: rgba(255, 50, 0, 0.1);
-    box-shadow: 0 0 40px 20px rgba(248, 233, 209, 0.2);
-    transform: translateY(-20px) scale(0);
+    opacity: 0.8;
+    background: rgba(255, 50, 0, 0.3);
+    box-shadow: 0 0 30px 10px rgba(248, 233, 209, 0.2);
+    transform: translateY(-10px) scale(0.8);
   }
 }
 
-@keyframes in {
-  to {
-    transform: translateY(0);
-  }
-}
+/* ==============================================
+   TEXT (Optional - if you want to keep it)
+   ============================================== */
 
 .text {
-  color: #8b6a60;
+  color: #a59fae;
   font-family: 'Lato', sans-serif;
   font-weight: 300;
   font-style: italic;
   text-align: center;
+  margin-top: 15px;
+  opacity: 0;
+  animation: fadeIn 1s 5.5s forwards;
 }
 
 .text h1 {
   font-size: 1.4em;
+  margin: 0;
+  font-weight: 300;
+}
+
+.text p {
+  font-size: 0.9em;
+  margin: 4px 0 0 0;
+  opacity: 0.8;
+}
+
+@keyframes fadeIn {
+  to {
+    opacity: 1;
+  }
 }
