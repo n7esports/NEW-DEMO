@@ -1,6 +1,7 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import { useBeep } from '../../hooks/useBeep'
+import { DEV_SKIP_KEY } from '../../config'
 import styles from './CountdownPhase.module.css'
 
 export interface CountdownPhaseProps {
@@ -33,6 +34,15 @@ export function CountdownPhase({ targetDate, onComplete }: CountdownPhaseProps) 
   const prefersReducedMotion = useReducedMotion()
   const lastBeepedSecond = useRef<number | null>(null)
   const [isSkipped, setIsSkipped] = useState(false)
+
+  // True in local `npm run dev`, OR on any deployment (Vercel included) when
+  // visited with ?dev=<DEV_SKIP_KEY> in the URL. Recomputed only once per
+  // mount since the query string doesn't change during a session.
+  const showSkipButton = useMemo(() => {
+    if (import.meta.env.DEV) return true
+    if (typeof window === 'undefined') return false
+    return new URLSearchParams(window.location.search).get('dev') === DEV_SKIP_KEY
+  }, [])
 
   // Ticks continuously against the real clock, so it survives tab throttling,
   // refreshes, and works correctly no matter when the page is opened.
@@ -99,7 +109,7 @@ export function CountdownPhase({ targetDate, onComplete }: CountdownPhaseProps) 
         </AnimatePresence>
         <p className={styles.label}>{secondsLeft > 0 ? 'Get ready…' : 'Happy Birthday!'}</p>
         {/* Only rendered in local dev builds — stripped entirely from `npm run build`. */}
-        {import.meta.env.DEV && (
+        {showSkipButton && (
           <button className={styles.skipButton} onClick={handleSkip}>
             Dev: Skip Timing
           </button>
@@ -135,7 +145,7 @@ export function CountdownPhase({ targetDate, onComplete }: CountdownPhaseProps) 
         ))}
       </div>
       {/* Only rendered in local dev builds — stripped entirely from `npm run build`. */}
-      {import.meta.env.DEV && (
+      {showSkipButton && (
         <button className={styles.skipButton} onClick={handleSkip}>
           Dev: Skip Timing
         </button>
