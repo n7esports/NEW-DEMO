@@ -1,0 +1,67 @@
+.locker {
+  width: min(320px, 100%);
+  padding: var(--spacing-xl);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.title {
+  margin: 0;
+  font-size: 15px;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.dots {
+  display: flex;
+  gap: 12px;
+}
+
+.dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 1px solid var(--color-glass-border);
+  background: transparent;
+  transition: background 0.15s ease;
+}
+
+.dotFilled {
+  background: var(--color-accent-pink);
+  box-shadow: 0 0 10px rgba(255, 117, 160, 0.7);
+}
+
+.error {
+  margin: 0;
+  font-size: 13px;
+  color: var(--color-accent-pink);
+  text-align: center;
+  min-height: 16px;
+}
+
+.keypad {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--spacing-sm);
+  width: 100%;
+}
+
+.key {
+  aspect-ratio: 1 / 1;
+  border-radius: 12px;
+  border: 1px solid var(--color-glass-border);
+  background: rgba(255, 255, 255, 0.06);
+  color: white;
+  font-size: 18px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.key:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.key:active {
+  transform: scale(0.94);
+}
