@@ -454,3 +454,32 @@ const styles: { [key: string]: React.CSSProperties } = {
     height: "100%",
   },
 };
+
+// ===== STYLES OBJECTS =====
+const styles: { [key: string]: React.CSSProperties } = {
+  container: {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    minHeight: "100vh",
+    width: "100%",
+    background: "#1c1a24",
+  },
+  cakeWrapper: {
+    position: "relative",
+    width: "200px",
+    height: "500px",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    overflow: "hidden",
+  },
+  cake: {
+    display: "block",
+    position: "relative",
+    width: "100%",
+    height: "100%",
+  },
+};
+
+export default CakeAssembly;  // ✅ ADD THIS LINE
