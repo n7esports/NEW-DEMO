@@ -400,7 +400,7 @@ const styles: { [key: string]: React.CSSProperties } = {
   cake: {
     display: "block",
     position: "relative",
-    margin: "-10em auto 0 auto",
+    margin: "auto 0 auto",
   },
   velas: {
     background: "#ffffff",
