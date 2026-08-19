@@ -438,6 +438,19 @@ const styles: { [key: string]: React.CSSProperties } = {
     width: "100%",
     background: "#1c1a24",
   },
+  cakeWrapper: {
+    position: "relative",
+    width: "200px",
+    height: "500px",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    overflow: "hidden",
+  },
+  cake: {
+    display: "block",
+    position: "relative",
+    width: "100%",
+    height: "100%",
+  },
 };
-
-export default CakeAssembly;
