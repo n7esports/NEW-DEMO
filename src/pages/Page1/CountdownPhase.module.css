@@ -1,180 +1,156 @@
-.wrap {
-  position: fixed;
-  inset: 0;
+/* Container Layout */
+.cakeContainer {
+  position: relative;
+  width: 220px;
+  height: 180px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  gap: var(--spacing-md);
-  transition: background 0.4s ease;
+  justify-content: flex-end;
+  margin: 0 auto;
 }
 
-.wrap[data-parity='even'] {
-  background: radial-gradient(circle at 50% 45%, rgba(255, 46, 147, 0.25), transparent 65%);
+/* 1. PLATE (Base Puddle) */
+.plate {
+  position: absolute;
+  bottom: 0;
+  width: 190px;
+  height: 8px;
+  background-color: #433c4a;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  z-index: 1;
 }
 
-.wrap[data-parity='odd'] {
-  background: radial-gradient(circle at 50% 45%, rgba(252, 227, 138, 0.2), transparent 65%);
+/* 2 & 3. CAKE LAYERS (Dough Base & Top) */
+.layer {
+  position: absolute;
+  width: 160px;
+  background-color: #7a5c58;
+  z-index: 2;
 }
 
-.number {
-  font-size: clamp(96px, 22vw, 200px);
-  font-weight: 800;
-  line-height: 1;
-  background: linear-gradient(135deg, var(--color-accent-pink), var(--color-accent-magenta));
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  filter: drop-shadow(0 0 40px rgba(255, 46, 147, 0.35));
+.layerBottom {
+  bottom: 6px;
+  height: 28px;
+  border-radius: 0 0 6px 6px;
 }
 
-.label {
-  font-family: var(--font-script);
-  font-size: 28px;
-  color: var(--color-accent-gold);
-  margin: 0;
+.layerTop {
+  bottom: 34px;
+  height: 28px;
 }
 
-/* --- Long-form (more than 10s out) display --- */
-
-.longWrap {
-  position: fixed;
-  inset: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: var(--spacing-sm);
-  padding: var(--spacing-lg);
-  text-align: center;
-  background: radial-gradient(circle at 50% 40%, rgba(255, 117, 160, 0.12), transparent 65%);
-}
-
-.eyebrow {
-  margin: 0;
-  font-size: 13px;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.55);
-}
-
-.targetLabel {
-  margin: 0 0 var(--spacing-lg);
-  font-family: var(--font-script);
-  font-size: clamp(28px, 5vw, 44px);
-  color: var(--color-accent-gold);
-  font-weight: 700;
-}
-
-.unitRow {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-sm);
-}
-
-.unitGroup {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-sm);
-}
-
-.unit {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 6px;
-  min-width: 76px;
-  padding: var(--spacing-md) var(--spacing-sm);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  background: var(--color-glass-bg);
-  border: 1px solid var(--color-glass-border);
-  border-radius: 16px;
-}
-
-.unitValue {
-  font-size: clamp(28px, 6vw, 48px);
-  font-weight: 800;
-  font-variant-numeric: tabular-nums;
-  background: linear-gradient(135deg, var(--color-accent-pink), var(--color-accent-magenta));
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-.unitLabel {
-  font-size: 12px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.6);
-}
-
-.divider {
-  font-size: clamp(20px, 4vw, 32px);
-  font-weight: 700;
-  color: rgba(255, 255, 255, 0.35);
-  transform: translateY(-10px);
-}
-
-@media (max-width: 480px) {
-  .unitRow {
-    flex-wrap: wrap;
-    row-gap: var(--spacing-sm);
-  }
-  .divider:nth-of-type(2) {
-    display: none;
-  }
-}
-/* Skip Button Styles */
-.skipButton {
-  position: fixed;
+/* 4. CREAM (Inner Frosting Line) */
+.cream {
+  position: absolute;
   bottom: 30px;
+  width: 160px;
+  height: 8px;
+  background-color: #533d3a;
+  z-index: 3;
+}
+
+/* 5. CHOCOLATE (Top Layer + Dripping Effect) */
+.chocolate {
+  position: absolute;
+  bottom: 58px;
+  width: 160px;
+  height: 22px;
+  background-color: #f7f0ea;
+  border-radius: 8px 8px 2px 2px;
+  z-index: 4;
+}
+
+/* Scalloped dripping chocolate pattern */
+.chocolate::before {
+  content: "";
+  position: absolute;
+  bottom: -8px;
+  left: 0;
+  width: 100%;
+  height: 12px;
+  background: radial-gradient(circle at 10px 0, #f7f0ea 12px, transparent 13px);
+  background-size: 20px 20px;
+  background-repeat: repeat-x;
+}
+
+/* Drip accents */
+.drip {
+  position: absolute;
+  bottom: -12px;
+  width: 8px;
+  height: 12px;
+  background-color: #f7f0ea;
+  border-radius: 0 0 8px 8px;
+}
+
+/* 6. CANDLE */
+.candle {
+  position: absolute;
+  bottom: 78px;
+  width: 8px;
+  height: 35px;
+  background-color: #ffffff;
+  border-radius: 3px;
+  z-index: 5;
+}
+
+/* 7. FLAME & GLOW */
+.flame {
+  position: absolute;
+  top: -16px;
   left: 50%;
   transform: translateX(-50%);
-  padding: 10px 28px;
-  font-size: 13px;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.6);
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 50px;
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  cursor: pointer;
-  transition: all 0.3s ease;
-  font-family: inherit;
-  z-index: 100;
-  white-space: nowrap;
+  width: 10px;
+  height: 16px;
+  background-color: #ffca36;
+  border-radius: 50% 50% 35% 35%;
+  box-shadow: 0 0 12px #ffca36, 0 0 26px #ffca36;
+  animation: flicker 1.2s infinite ease-in-out alternate;
 }
 
-.skipButton:hover {
-  background: rgba(255, 255, 255, 0.1);
-  border-color: rgba(255, 255, 255, 0.15);
-  transform: translateX(-50%) scale(1.03);
-  color: rgba(255, 255, 255, 0.8);
-  box-shadow: 0 0 30px rgba(255, 46, 147, 0.08);
+.flameOut {
+  opacity: 0 !important;
+  transition: opacity 0.3s ease-out;
 }
 
-.skipButton:active {
-  transform: translateX(-50%) scale(0.97);
+/* SMOKE (When blown out) */
+.smoke {
+  position: absolute;
+  top: -20px;
+  left: 50%;
+  width: 6px;
+  height: 6px;
+  background: rgba(200, 200, 200, 0.6);
+  border-radius: 50%;
+  animation: smokeRise 1.5s ease-out forwards;
 }
 
-/* Responsive Styles */
-@media (max-width: 768px) {
-  .skipButton {
-    bottom: 20px;
-    padding: 8px 20px;
-    font-size: 11px;
+/* ANIMATIONS */
+@keyframes flicker {
+  0% {
+    transform: translateX(-50%) scale(1) rotate(-1deg);
+    opacity: 1;
+  }
+  50% {
+    transform: translateX(-50%) scale(0.92) rotate(1.5deg);
+    opacity: 0.85;
+  }
+  100% {
+    transform: translateX(-50%) scale(1.08) rotate(-1deg);
+    box-shadow: 0 0 16px #ffca36, 0 0 32px #ffca36;
+    opacity: 1;
   }
 }
 
-@media (max-width: 480px) {
-  .skipButton {
-    bottom: 16px;
-    padding: 6px 16px;
-    font-size: 10px;
-    letter-spacing: 0.06em;
+@keyframes smokeRise {
+  0% {
+    transform: translateX(-50%) translateY(0) scale(1);
+    opacity: 0.8;
+  }
+  100% {
+    transform: translateX(-15px) translateY(-35px) scale(3);
+    opacity: 0;
   }
 }
