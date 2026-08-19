@@ -30,21 +30,24 @@ const CakeAssembly: React.FC = () => {
         }
 
         /* Candle drop animation */
-        .velas {
-          background: #ffffff;
-          border-radius: 10px;
-          position: absolute;
-          top: 378px; /* Positioned directly above top frosting layer */
-          left: 50%;
-          margin-left: -2.5px;
-          width: 5px;
-          height: 35px;
-          transform: translateY(-400px);
-          opacity: 0;
-          backface-visibility: hidden;
-          animation: dropIn 600ms 4.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-          z-index: 10;
-        }
+      velas: {
+  background: "#ffffff",
+  borderRadius: "10px",
+  position: "absolute",
+  top: "228px",
+  left: "50%",
+  marginLeft: "-2.4px",
+  marginTop: "-8.33333333px",
+  width: "5px",
+  height: "35px",
+  transform: "translateY(-300px)",
+  backfaceVisibility: "hidden",
+  // Hide pseudo-elements during animation
+  "&:before, &:after": {
+    opacity: 0,  // Hide initially
+    transition: "opacity 0.3s ease 6.3s", // Fade in after animation
+  },
+},
 
         /* Prevent "T" shape during drop */
         .velas:after,
