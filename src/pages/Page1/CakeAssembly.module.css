@@ -45,6 +45,19 @@ body {
   animation: in 500ms 6s ease-out forwards;
 }
 
+/* Hide pseudo-elements until animation completes */
+.velas:before,
+.velas:after {
+  opacity: 0;
+  animation: showStripes 0.3s 6.5s ease forwards;
+}
+
+@keyframes showStripes {
+  to {
+    opacity: 1;
+  }
+}
+
 .velas:after,
 .velas:before {
   background: rgba(255, 0, 0, 0.4);
