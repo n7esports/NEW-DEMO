@@ -15,7 +15,6 @@ function Router() {
   if (currentPage === 3) return <Page3 onComplete={next} />
   if (currentPage === 4) return <Page4 onComplete={next} />
 
-  // Pages 5–6 are built next. This placeholder keeps the state machine navigable.
   return (
     <div className={styles.placeholder}>
       <p className={styles.placeholderEmoji}>🚧</p>
