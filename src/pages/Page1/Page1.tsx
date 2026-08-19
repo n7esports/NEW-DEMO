@@ -7,26 +7,12 @@ import { FireworksPhase } from './FireworksPhase'
 import { CakeAssembly } from './CakeAssembly'
 import { WishModal } from './WishModal'
 import { BalloonsPhase } from './BalloonsPhase'
-import type { CakeElement, Page1State } from './types'
+import type { Page1State } from './types'
 import styles from './Page1.module.css'
 
 export interface Page1Props {
   onComplete: () => void
 }
-
-const CAKE_ELEMENTS: CakeElement[] = [
-  { id: 'plate', type: 'plate', animation: 'bounce', delay: 0 },
-  { id: 'layer-1', type: 'layer', animation: 'bounce', delay: 150 },
-  { id: 'cream', type: 'cream', animation: 'bounce', delay: 300 },
-  { id: 'layer-2', type: 'layer', animation: 'bounce', delay: 450 },
-  { id: 'chocolate', type: 'chocolate', animation: 'bounce', delay: 650 },
-  { id: 'strawberry', type: 'strawberry', animation: 'bounce', delay: 750 },
-  { id: 'candle-1', type: 'candle', animation: 'bounce', delay: 900 },
-  { id: 'candle-2', type: 'candle', animation: 'bounce', delay: 980 },
-  { id: 'candle-3', type: 'candle', animation: 'bounce', delay: 1060 },
-  { id: 'candle-4', type: 'candle', animation: 'bounce', delay: 1140 },
-  { id: 'candle-5', type: 'candle', animation: 'bounce', delay: 1220 },
-]
 
 export function Page1({ onComplete }: Page1Props) {
   const { userData, dispatch } = useAppContext()
@@ -68,10 +54,10 @@ export function Page1({ onComplete }: Page1Props) {
 
       {showCakeScene && (
         <div className={styles.cakeScene}>
-          <CakeAssembly elements={CAKE_ELEMENTS} blown={blown} onAssembled={handleAssembled} />
+          <CakeAssembly blown={blown} onAssembled={handleAssembled} />
           {assembled && phase === 'cakeAssembly' && (
             <button type="button" className={styles.cta} onClick={hasWished ? handleBlowOut : () => setPhase('wish')}>
-              {hasWished ? 'Blow Out the Candles 🕯️' : '🎂 Make a Wish'}
+              {hasWished ? 'Blow Out the Candle 🕯️' : '🎂 Make a Wish'}
             </button>
           )}
         </div>

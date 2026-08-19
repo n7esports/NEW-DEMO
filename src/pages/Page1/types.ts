@@ -1,13 +1,5 @@
 export type Page1State = 'countdown' | 'fireworks' | 'cakeAssembly' | 'wish' | 'blowOut' | 'balloons'
 
-export interface CakeElement {
-  id: string
-  type: 'plate' | 'layer' | 'cream' | 'chocolate' | 'strawberry' | 'candle'
-  emoji?: string
-  animation: 'bounce' | 'fade' | 'scale'
-  delay: number // ms
-}
-
 export interface Particle {
   x: number
   y: number

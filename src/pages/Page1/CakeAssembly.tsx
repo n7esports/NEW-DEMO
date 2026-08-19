@@ -1,77 +1,56 @@
-import { motion, useReducedMotion } from 'framer-motion'
-import type { CakeElement } from './types'
+import { useEffect, useRef } from 'react'
+import { useReducedMotion } from 'framer-motion'
 import styles from './CakeAssembly.module.css'
 
 export interface CakeAssemblyProps {
-  elements: CakeElement[]
   blown: boolean
   onAssembled: () => void
 }
 
-const BODY_TYPES = new Set<CakeElement['type']>(['plate', 'layer', 'cream'])
+// Roughly matches the candle drop-in (0.6s) plus the flame's fade-in
+// (starts at 0.6s, takes 0.4s) — "assembled" fires right as the flame settles.
+const ASSEMBLE_MS = 1000
 
-function ElementContent({ el, blown }: { el: CakeElement; blown: boolean }) {
-  switch (el.type) {
-    case 'plate':
-      return <div className={styles.plate} />
-    case 'layer':
-      return <div className={styles.layer} />
-    case 'cream':
-      return <div className={styles.cream} />
-    case 'chocolate':
-      return <span className={styles.topping}>{el.emoji ?? '🍫'}</span>
-    case 'strawberry':
-      return <span className={styles.topping}>{el.emoji ?? '🍓'}</span>
-    case 'candle':
-      return (
-        <div className={styles.candle}>
-          <div className={`${styles.flame} ${blown ? styles.flameOut : ''}`} />
-          {blown && <span className={styles.smoke} />}
-        </div>
-      )
-    default:
-      return null
-  }
-}
-
-export function CakeAssembly({ elements, blown, onAssembled }: CakeAssemblyProps) {
+export function CakeAssembly({ blown, onAssembled }: CakeAssemblyProps) {
   const prefersReducedMotion = useReducedMotion()
-  const bodyElements = elements.filter((e) => BODY_TYPES.has(e.type))
-  const topElements = elements.filter((e) => !BODY_TYPES.has(e.type))
-  const lastId = elements[elements.length - 1]?.id
+  const firedRef = useRef(false)
+  // Keeps the effect below free of an exhaustive-deps escape hatch: we always
+  // call whatever onAssembled currently is, without re-running the timer if
+  // the caller passes a new function identity on re-render.
+  const onAssembledRef = useRef(onAssembled)
+  onAssembledRef.current = onAssembled
 
-  const bounce = (delay: number) => ({
-    initial: prefersReducedMotion ? undefined : { y: -500, opacity: 0 },
-    animate: { y: 0, opacity: 1 },
-    transition: { type: 'spring' as const, damping: 12, stiffness: 200, delay: delay / 1000 },
-  })
+  useEffect(() => {
+    if (firedRef.current) return
+    firedRef.current = true
+
+    if (prefersReducedMotion) {
+      onAssembledRef.current()
+      return
+    }
+    const timeout = window.setTimeout(() => onAssembledRef.current(), ASSEMBLE_MS)
+    return () => window.clearTimeout(timeout)
+  }, [prefersReducedMotion])
+
+  const flameClass = [
+    styles.flame,
+    prefersReducedMotion ? styles.flameStatic : '',
+    blown ? styles.flameOut : '',
+  ]
+    .filter(Boolean)
+    .join(' ')
 
   return (
-    <div className={styles.cakeWrap}>
-      {blown && <span className={styles.windStreak} aria-hidden="true" />}
-      <div className={styles.topRow}>
-        {topElements.map((el) => (
-          <motion.div
-            key={el.id}
-            className={styles.topSlot}
-            {...bounce(el.delay)}
-            onAnimationComplete={el.id === lastId ? onAssembled : undefined}
-          >
-            <ElementContent el={el} blown={blown} />
-          </motion.div>
-        ))}
+    <div className={styles.cakeContainer}>
+      <div className={`${styles.candle} ${prefersReducedMotion ? styles.candleStatic : ''}`}>
+        <div className={flameClass} />
+        {blown && <span className={styles.smoke} aria-hidden="true" />}
       </div>
-      <div className={styles.body}>
-        {bodyElements.map((el) => (
-          <motion.div
-            key={el.id}
-            {...bounce(el.delay)}
-            onAnimationComplete={el.id === lastId ? onAssembled : undefined}
-          >
-            <ElementContent el={el} blown={blown} />
-          </motion.div>
-        ))}
+      <div className={styles.frosting} />
+      <div className={styles.cakeBody}>
+        <div className={styles.layerStripe} />
       </div>
+      <div className={styles.plate} />
     </div>
   )
 }
