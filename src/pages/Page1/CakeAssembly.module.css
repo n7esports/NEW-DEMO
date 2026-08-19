@@ -23,7 +23,7 @@ body {
 }
 
 /* ==============================================
-   WRAPPER - Shared container for candle + SVG
+   WRAPPER
    ============================================== */
 
 .cake-wrapper {
@@ -47,6 +47,188 @@ body {
 }
 
 /* ==============================================
+   PLATE
+   ============================================== */
+
+.plate {
+  width: 220px;
+  height: 10px;
+  background: #433c4a;
+  border-radius: 10px;
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  margin-left: -110px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  opacity: 0;
+  transform: translateY(-300px);
+  animation: dropInPlate 500ms 0.2s ease-out forwards;
+}
+
+@keyframes dropInPlate {
+  0% {
+    opacity: 0;
+    transform: translateY(-300px);
+  }
+  60% {
+    opacity: 1;
+    transform: translateY(8px);
+  }
+  80% {
+    transform: translateY(-3px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ==============================================
+   CAKE LAYERS
+   ============================================== */
+
+.layer {
+  position: absolute;
+  width: 180px;
+  height: 60px;
+  background: #7a5c58;
+  border-radius: 0 0 6px 6px;
+  bottom: 20px;
+  left: 50%;
+  margin-left: -90px;
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(-300px);
+  animation: dropInLayer 500ms 1.5s ease-out forwards;
+}
+
+/* Different layers with different delays */
+.layer-bottom {
+  animation-delay: 0.3s;
+}
+
+.layer-middle {
+  animation-delay: 0.8s;
+}
+
+.layer-top {
+  animation-delay: 1.3s;
+}
+
+@keyframes dropInLayer {
+  0% {
+    opacity: 0;
+    transform: translateY(-300px) scaleY(0.5);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(15px) scaleY(1.1);
+  }
+  75% {
+    transform: translateY(-5px) scaleY(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scaleY(1);
+  }
+}
+
+/* ==============================================
+   CREAM / FILLING
+   ============================================== */
+
+.cream {
+  position: absolute;
+  top: 25px;
+  width: 100%;
+  height: 10px;
+  background: #533d3a;
+  opacity: 0;
+  transform: translateY(-300px);
+  animation: dropInCream 500ms 2.5s ease-out forwards;
+}
+
+@keyframes dropInCream {
+  0% {
+    opacity: 0;
+    transform: translateY(-300px);
+  }
+  60% {
+    opacity: 1;
+    transform: translateY(10px);
+  }
+  80% {
+    transform: translateY(-3px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ==============================================
+   CHOCOLATE / FROSTING TOP
+   ============================================== */
+
+.bizcocho {
+  position: absolute;
+  width: 180px;
+  height: 25px;
+  background: #f7f0ea;
+  border-radius: 10px 10px 4px 4px;
+  bottom: 75px;
+  left: 50%;
+  margin-left: -90px;
+  opacity: 0;
+  transform: translateY(-300px) scaleX(0.5);
+  animation: dropInChocolate 600ms 3.5s ease-out forwards;
+}
+
+/* Drip effect */
+.bizcocho:after {
+  content: "";
+  position: absolute;
+  bottom: -8px;
+  left: 0;
+  width: 100%;
+  height: 12px;
+  background: radial-gradient(circle at 10px 0, #f7f0ea 12px, transparent 13px);
+  background-size: 20px 20px;
+  background-repeat: repeat-x;
+  opacity: 0;
+  animation: fadeInDrips 400ms 4.2s ease forwards;
+}
+
+@keyframes dropInChocolate {
+  0% {
+    opacity: 0;
+    transform: translateY(-300px) scaleX(0.3);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(12px) scaleX(1.1);
+  }
+  75% {
+    transform: translateY(-4px) scaleX(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scaleX(1);
+  }
+}
+
+@keyframes fadeInDrips {
+  0% {
+    opacity: 0;
+    transform: scaleY(0.3);
+  }
+  100% {
+    opacity: 1;
+    transform: scaleY(1);
+  }
+}
+
+/* ==============================================
    CANDLE - FIXED 'T' SHAPE ARTIFACT
    ============================================== */
 
@@ -63,7 +245,7 @@ body {
   transform: translateY(-300px);
   backface-visibility: hidden;
   opacity: 0;
-  animation: dropIn 600ms 5.5s ease-out forwards;
+  animation: dropInCandle 600ms 5.5s ease-out forwards;
   z-index: 10;
 }
 
@@ -100,12 +282,12 @@ body {
 
 /* 
    Fade in animation for stripes
-   Smooth opacity transition from 0 to 1
+   Smooth opacity transition from 0 to 1 with slight scale
 */
 @keyframes fadeInStripes {
   0% {
     opacity: 0;
-    transform: scaleX(0.5);
+    transform: scaleX(0.3);
   }
   100% {
     opacity: 1;
@@ -114,19 +296,20 @@ body {
 }
 
 /* ==============================================
-   CANDLE DROP KEYFRAMES
+   CANDLE DROP KEYFRAME
    ============================================== */
 
-@keyframes dropIn {
+@keyframes dropInCandle {
   0% {
     opacity: 0;
     transform: translateY(-300px) scaleX(1);
   }
   50% {
-    opacity: 1;
+    opacity: 0.9;
     transform: translateY(15px) scaleX(1);
   }
   70% {
+    opacity: 1;
     transform: translateY(-5px) scaleX(1);
   }
   100% {
@@ -198,7 +381,7 @@ body {
   text-align: center;
   margin-top: 15px;
   opacity: 0;
-  animation: fadeIn 1s 5.5s forwards;
+  animation: fadeInText 1s 5.5s forwards;
 }
 
 .text h1 {
@@ -213,7 +396,7 @@ body {
   opacity: 0.8;
 }
 
-@keyframes fadeIn {
+@keyframes fadeInText {
   to {
     opacity: 1;
   }
