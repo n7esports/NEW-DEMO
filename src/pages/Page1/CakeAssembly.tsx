@@ -29,36 +29,38 @@ const CakeAssembly: React.FC = () => {
           font-family: 'Lato', sans-serif;
         }
 
-        /* Candle drop animation */
-      velas: {
-  background: "#ffffff",
-  borderRadius: "10px",
-  position: "absolute",
-  top: "228px",
-  left: "50%",
-  marginLeft: "-2.4px",
-  marginTop: "-8.33333333px",
-  width: "5px",
-  height: "35px",
-  transform: "translateY(-300px)",
-  backfaceVisibility: "hidden",
-  // Hide pseudo-elements during animation
-  "&:before, &:after": {
-    opacity: 0,  // Hide initially
-    transition: "opacity 0.3s ease 6.3s", // Fade in after animation
-  },
-},
+        /* ===== CANDLE DROP ANIMATION ===== */
+        .velas {
+          background: #ffffff;
+          border-radius: 10px;
+          position: absolute;
+          top: 378px;
+          left: 50%;
+          margin-left: -2.4px;
+          margin-top: -8.33333333px;
+          width: 5px;
+          height: 35px;
+          transform: translateY(-300px);
+          backface-visibility: hidden;
+          opacity: 0;
+          animation: dropIn 600ms 5.5s ease-out forwards;
+          z-index: 10;
+        }
 
-        /* Prevent "T" shape during drop */
+        /* Hide red stripes initially - they fade in AFTER candle lands */
+        .velas:before,
+        .velas:after {
+          opacity: 0;
+          animation: fadeInStripes 300ms 6.3s ease forwards;
+        }
+
         .velas:after,
         .velas:before {
-          background: rgba(255, 0, 0, 0.6);
+          background: rgba(255, 0, 0, 0.5);
           content: "";
           position: absolute;
           width: 100%;
-          height: 2.22px;
-          opacity: 0;
-          animation: fadeInStripe 300ms 5s forwards;
+          height: 2.22222222px;
         }
 
         .velas:after {
@@ -71,22 +73,61 @@ const CakeAssembly: React.FC = () => {
           left: 0;
         }
 
+        @keyframes dropIn {
+          0% {
+            opacity: 0;
+            transform: translateY(-300px);
+          }
+          60% {
+            opacity: 1;
+            transform: translateY(10px);
+          }
+          80% {
+            transform: translateY(-5px);
+          }
+          100% {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes fadeInStripes {
+          0% {
+            opacity: 0;
+          }
+          100% {
+            opacity: 1;
+          }
+        }
+
+        /* ===== FLAME ANIMATION ===== */
         .fuego {
           border-radius: 100%;
           position: absolute;
           top: -20px;
           left: 50%;
-          margin-left: -3.33px;
-          width: 6.66px;
+          margin-left: -2.6px;
+          width: 6.66666667px;
           height: 18px;
           opacity: 0;
         }
 
-        .fuego:nth-child(1) { animation: fuego 2s 5.2s infinite; }
-        .fuego:nth-child(2) { animation: fuego 1.5s 5.2s infinite; }
-        .fuego:nth-child(3) { animation: fuego 1s 5.2s infinite; }
-        .fuego:nth-child(4) { animation: fuego 0.5s 5.2s infinite; }
-        .fuego:nth-child(5) { animation: fuego 0.2s 5.2s infinite; }
+        /* Flame starts AFTER candle lands (6.3s + small delay) */
+        .fuego:nth-child(1) {
+          animation: fuego 2s 6.6s infinite;
+        }
+        .fuego:nth-child(2) {
+          animation: fuego 1.5s 6.6s infinite;
+        }
+        .fuego:nth-child(3) {
+          animation: fuego 1s 6.6s infinite;
+        }
+        .fuego:nth-child(4) {
+          animation: fuego 0.5s 6.6s infinite;
+        }
+        .fuego:nth-child(5) {
+          animation: fuego 0.2s 6.6s infinite;
+        }
 
         @keyframes fuego {
           0%, 100% {
@@ -97,28 +138,33 @@ const CakeAssembly: React.FC = () => {
           }
           50% {
             opacity: 0.8;
-            background: rgba(255, 50, 0, 0.4);
+            background: rgba(255, 50, 0, 0.3);
             box-shadow: 0 0 30px 10px rgba(248, 233, 209, 0.2);
             transform: translateY(-10px) scale(0.8);
           }
         }
 
-        @keyframes dropIn {
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
+        /* ===== SVG ANIMATIONS ===== */
+        #cake {
+          display: block;
+          position: relative;
+          width: 100%;
+          height: 100%;
         }
 
-        @keyframes fadeInStripe {
-          to {
-            opacity: 1;
-          }
+        /* Fix any clipping issues */
+        .cake-wrapper {
+          position: relative;
+          width: 200px;
+          height: 500px;
+          display: flex;
+          justify-content: center;
+          align-items: center;
         }
       `}</style>
 
-      {/* ====== WRAPPER TO FIX ABSOLUTE POSITIONING ====== */}
-      <div style={styles.cakeWrapper}>
+      {/* ====== WRAPPER FOR CANDLE + SVG ====== */}
+      <div className="cake-wrapper" style={styles.cakeWrapper}>
         {/* ====== CANDLE ====== */}
         <div className="velas">
           <div className="fuego" />
@@ -141,7 +187,7 @@ const CakeAssembly: React.FC = () => {
           xmlSpace="preserve"
           style={styles.cake}
         >
-          {/* Base layer */}
+          {/* Layer 1: Base/Bottom (bizcocho_3) */}
           <path
             fill="#a88679"
             d="M173.667-13.94c-49.298,0-102.782,0-147.334,0c-3.999,0-4-16.002,0-16.002
@@ -169,7 +215,7 @@ const CakeAssembly: React.FC = () => {
             />
           </path>
 
-          {/* Filling layer 2 */}
+          {/* Layer 2: Filling (relleno_2) - starts after bizcocho_3 ends */}
           <path
             fill="#8b6a60"
             d="M100-178.521c1.858,0,3.364,1.506,3.364,3.363c0,0,0,33.17,0,44.227
@@ -217,7 +263,7 @@ const CakeAssembly: React.FC = () => {
             />
           </path>
 
-          {/* Cake layer 2 */}
+          {/* Layer 3: Cake layer 2 (bizcocho_2) - starts after relleno_2 ends */}
           <path
             fill="#a88679"
             d="M173.667-15.929c-46.512,0-105.486,0-147.334,0c-3.999,0-4-16.002,0-16.002
@@ -246,7 +292,7 @@ const CakeAssembly: React.FC = () => {
             />
           </path>
 
-          {/* Filling layer 1 */}
+          {/* Layer 4: Filling 1 (relleno_1) - starts after bizcocho_2 ends */}
           <path
             fill="#8b6a60"
             d="M101.368-73.685c0,12.164,0,15.18,0,28.519c0,22.702,0-13.661,0,8.304c0,14.48,0,18.233,0,30.512
@@ -280,7 +326,7 @@ const CakeAssembly: React.FC = () => {
             />
           </path>
 
-          {/* Cake layer 1 (Base/Bottom) */}
+          {/* Layer 5: Cake layer 1 (bizcocho_1) - starts after relleno_1 ends */}
           <path
             fill="#a88679"
             d="M173.667,21.571c-33.174,0-111.467,0-147.334,0c-4,0-4-16.002,0-16.002c39.836,0,105.982,0,147.334,0
@@ -318,7 +364,7 @@ const CakeAssembly: React.FC = () => {
             />
           </path>
 
-          {/* Cream/frosting top layer */}
+          {/* Layer 6: Cream/Frosting (crema) - starts after bizcocho_1 ends */}
           <path
             fill="#fefae9"
             d="M104.812,113.216c0,3.119-2.164,5.67-4.812,5.67c-2.646,0-4.812-2.551-4.812-5.67c0-5.594,0-16.782,0-22.375
@@ -387,7 +433,7 @@ const CakeAssembly: React.FC = () => {
             />
           </path>
 
-          {/* Bottom rectangle plate */}
+          {/* Bottom plate */}
           <rect x="10" y={475.571} fill="#fefae9" width={180} height={4} />
         </svg>
       </div>
@@ -411,6 +457,7 @@ const styles: { [key: string]: React.CSSProperties } = {
     height: "500px",
     display: "flex",
     justifyContent: "center",
+    alignItems: "center",
   },
   cake: {
     display: "block",
