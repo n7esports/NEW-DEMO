@@ -1,6 +1,7 @@
 import { useCallback, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useAppContext } from '../../context/AppContext'
+import { BIRTHDAY_TARGET } from '../../config'
 import { CountdownPhase } from './CountdownPhase'
 import { FireworksPhase } from './FireworksPhase'
 import { CakeAssembly } from './CakeAssembly'
@@ -12,12 +13,6 @@ import styles from './Page1.module.css'
 export interface Page1Props {
   onComplete: () => void
 }
-
-// The moment the birthday "arrives". Local time — the last 10 seconds
-// before this (i.e. from Sep 14, 2026, 11:59:50 PM) trigger the big
-// bounce-and-beep countdown; before that, a live days/hours/min/sec
-// display is shown instead.
-const BIRTHDAY_TARGET = new Date(2026, 8, 15, 0, 0, 0) // month is 0-indexed: 8 = September
 
 const CAKE_ELEMENTS: CakeElement[] = [
   { id: 'plate', type: 'plate', animation: 'bounce', delay: 0 },

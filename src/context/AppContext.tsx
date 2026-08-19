@@ -1,4 +1,5 @@
 import { createContext, useContext, useReducer, type ReactNode } from 'react'
+import { BIRTHDAY_TARGET, RECIPIENT_NAME } from '../config'
 import type { AppAction, AppContextType, AppState, UserData } from '../types'
 
 // Maps each AppState to the numeric page it belongs to, so components can
@@ -66,7 +67,11 @@ const AppContext = createContext<AppContextType | null>(null)
 export function AppProvider({ children }: { children: ReactNode }) {
   const [state, dispatch] = useReducer(reducer, {
     currentState: 'page1-countdown' as AppState,
-    userData: { name: '', birthday: '', wishText: '' },
+    userData: {
+      name: RECIPIENT_NAME,
+      birthday: BIRTHDAY_TARGET.toISOString(),
+      wishText: '',
+    },
   })
 
   const value: AppContextType = {

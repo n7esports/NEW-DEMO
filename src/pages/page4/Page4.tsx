@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
 import { useAppContext } from '../../context/AppContext'
+import { VAULT_PASSCODE } from '../../config'
 import { DigitalLocker } from './DigitalLocker'
 import { MasonryGallery } from './MasonryGallery'
 import type { GalleryItem } from './types'
@@ -9,8 +10,10 @@ export interface Page4Props {
   onComplete: () => void
 }
 
-// Change this to the recipient's real DOB (e.g. DDMM or MMDD) before sending the gift.
-const VAULT_PASSCODE = '1509'
+// Drop a real file at /public/videos/sample.mp4 and flip this to true to
+// show it in the gallery. Left off by default so the gallery never links
+// to a video that doesn't exist in a fresh checkout.
+const HAS_VIDEO = false
 
 export function Page4({ onComplete }: Page4Props) {
   const { userData } = useAppContext()
@@ -24,10 +27,11 @@ export function Page4({ onComplete }: Page4Props) {
       caption: `Shot ${i + 1}`,
       polaroid: true,
     }))
+    if (!HAS_VIDEO) return photoItems
     const videoItem: GalleryItem = {
       id: 'video-1',
       type: 'video',
-      src: '/videos/sample.mp4', // drop a file here to enable playback
+      src: '/videos/sample.mp4',
     }
     return [...photoItems, videoItem]
   }, [userData.photoStrip])

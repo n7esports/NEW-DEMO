@@ -98,13 +98,12 @@ export function CountdownPhase({ targetDate, onComplete }: CountdownPhaseProps) 
           </motion.div>
         </AnimatePresence>
         <p className={styles.label}>{secondsLeft > 0 ? 'Get ready…' : 'Happy Birthday!'}</p>
-        {/* DEV SKIP BUTTON */}
-        <button 
-          className={styles.skipButton} 
-          onClick={handleSkip}
-        >
-          Dev: Skip Timing
-        </button>
+        {/* Only rendered in local dev builds — stripped entirely from `npm run build`. */}
+        {import.meta.env.DEV && (
+          <button className={styles.skipButton} onClick={handleSkip}>
+            Dev: Skip Timing
+          </button>
+        )}
       </div>
     )
   }
@@ -135,13 +134,12 @@ export function CountdownPhase({ targetDate, onComplete }: CountdownPhaseProps) 
           </div>
         ))}
       </div>
-      {/* DEV SKIP BUTTON */}
-      <button 
-        className={styles.skipButton} 
-        onClick={handleSkip}
-      >
-        Dev: Skip Timing
-      </button>
+      {/* Only rendered in local dev builds — stripped entirely from `npm run build`. */}
+      {import.meta.env.DEV && (
+        <button className={styles.skipButton} onClick={handleSkip}>
+          Dev: Skip Timing
+        </button>
+      )}
     </div>
   )
 }
