@@ -17,6 +17,7 @@ const CakeAssembly: React.FC = () => {
         body {
           width: 100%;
           height: 100%;
+          overflow: hidden;
         }
 
         body {
@@ -37,6 +38,7 @@ const CakeAssembly: React.FC = () => {
           display: flex;
           justify-content: center;
           align-items: center;
+          overflow: hidden;
         }
 
         #cake {
@@ -44,6 +46,111 @@ const CakeAssembly: React.FC = () => {
           position: relative;
           width: 100%;
           height: 100%;
+        }
+
+        /* ===== ALL ELEMENTS START HIDDEN OUTSIDE SCREEN ===== */
+        .plate,
+        .layer,
+        .cream,
+        .bizcocho,
+        .velas {
+          opacity: 0 !important;
+          transform: translateY(-1500px) !important;
+          animation-fill-mode: forwards !important;
+        }
+
+        /* ===== PLATE ===== */
+        .plate {
+          width: 220px;
+          height: 10px;
+          background: #433c4a;
+          border-radius: 10px;
+          position: absolute;
+          bottom: 10px;
+          left: 50%;
+          margin-left: -110px;
+          box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+          animation: dropInPlate 500ms 0.2s ease-out forwards;
+        }
+
+        @keyframes dropInPlate {
+          0% { opacity: 0; transform: translateY(-1500px); }
+          100% { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ===== LAYERS ===== */
+        .layer {
+          position: absolute;
+          width: 180px;
+          height: 60px;
+          background: #7a5c58;
+          border-radius: 0 0 6px 6px;
+          bottom: 20px;
+          left: 50%;
+          margin-left: -90px;
+          overflow: hidden;
+          animation: dropInLayer 500ms ease-out forwards;
+        }
+
+        .layer-bottom { animation-delay: 0.3s; }
+        .layer-middle { animation-delay: 0.8s; }
+        .layer-top { animation-delay: 1.3s; }
+
+        @keyframes dropInLayer {
+          0% { opacity: 0; transform: translateY(-1500px); }
+          100% { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ===== CREAM ===== */
+        .cream {
+          position: absolute;
+          top: 25px;
+          width: 100%;
+          height: 10px;
+          background: #533d3a;
+          animation: dropInCream 500ms 2.5s ease-out forwards;
+        }
+
+        @keyframes dropInCream {
+          0% { opacity: 0; transform: translateY(-1500px); }
+          100% { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ===== CHOCOLATE ===== */
+        .bizcocho {
+          position: absolute;
+          width: 180px;
+          height: 25px;
+          background: #f7f0ea;
+          border-radius: 10px 10px 4px 4px;
+          bottom: 75px;
+          left: 50%;
+          margin-left: -90px;
+          animation: dropInChocolate 600ms 3.5s ease-out forwards;
+        }
+
+        .bizcocho:after {
+          content: "";
+          position: absolute;
+          bottom: -8px;
+          left: 0;
+          width: 100%;
+          height: 12px;
+          background: radial-gradient(circle at 10px 0, #f7f0ea 12px, transparent 13px);
+          background-size: 20px 20px;
+          background-repeat: repeat-x;
+          opacity: 0;
+          animation: fadeInDrips 400ms 4.2s ease forwards;
+        }
+
+        @keyframes dropInChocolate {
+          0% { opacity: 0; transform: translateY(-1500px); }
+          100% { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInDrips {
+          0% { opacity: 0; }
+          100% { opacity: 1; }
         }
 
         /* ===== CANDLE ===== */
@@ -57,60 +164,42 @@ const CakeAssembly: React.FC = () => {
           margin-top: -8.33333333px;
           width: 5px;
           height: 35px;
-          transform: translateY(-300px);
           backface-visibility: hidden;
-          opacity: 0;
-          animation: dropIn 600ms 5.5s ease-out forwards;
+          animation: dropInCandle 600ms 5.5s ease-out forwards;
           z-index: 10;
         }
 
         .velas:before,
         .velas:after {
-          opacity: 0;
-          animation: fadeInStripes 300ms 6.3s ease forwards;
-        }
-
-        .velas:after,
-        .velas:before {
-          background: rgba(255, 0, 0, 0.5);
           content: "";
           position: absolute;
           width: 100%;
           height: 2.22222222px;
-        }
-
-        .velas:after {
-          top: 25%;
-          left: 0;
+          background: rgba(255, 0, 0, 0.5);
+          opacity: 0;
+          pointer-events: none;
         }
 
         .velas:before {
           top: 45%;
           left: 0;
+          animation: fadeInStripes 400ms 6.3s ease forwards;
         }
 
-        @keyframes dropIn {
-          0% {
-            opacity: 0;
-            transform: translateY(-300px);
-          }
-          60% {
-            opacity: 1;
-            transform: translateY(10px);
-          }
-          80% {
-            transform: translateY(-5px);
-          }
-          100% {
-            opacity: 1;
-            transform: translateY(0);
-          }
+        .velas:after {
+          top: 25%;
+          left: 0;
+          animation: fadeInStripes 400ms 6.3s ease forwards;
         }
 
         @keyframes fadeInStripes {
-          to {
-            opacity: 1;
-          }
+          0% { opacity: 0; }
+          100% { opacity: 1; }
+        }
+
+        @keyframes dropInCandle {
+          0% { opacity: 0; transform: translateY(-1500px); }
+          100% { opacity: 1; transform: translateY(0); }
         }
 
         /* ===== FLAME ===== */
@@ -145,10 +234,29 @@ const CakeAssembly: React.FC = () => {
             transform: translateY(-10px) scale(0.8);
           }
         }
+
+        /* ===== TEXT ===== */
+        .text {
+          color: #a59fae;
+          font-family: 'Lato', sans-serif;
+          font-weight: 300;
+          font-style: italic;
+          text-align: center;
+          margin-top: 15px;
+          opacity: 0;
+          animation: fadeInText 1s 5.5s forwards;
+        }
+
+        .text h1 { font-size: 1.4em; margin: 0; font-weight: 300; }
+        .text p { font-size: 0.9em; margin: 4px 0 0 0; opacity: 0.8; }
+
+        @keyframes fadeInText {
+          to { opacity: 1; }
+        }
       `}</style>
 
       {/* ===== WRAPPER ===== */}
-      <div className="cake-wrapper">
+      <div className="cake-wrapper" style={styles.cakeWrapper}>
         {/* ===== CANDLE ===== */}
         <div className="velas">
           <div className="fuego" />
@@ -169,6 +277,7 @@ const CakeAssembly: React.FC = () => {
           viewBox="0 0 200 500"
           enableBackground="new 0 0 200 500"
           xmlSpace="preserve"
+          style={styles.cake}
         >
           {/* ===== LAYER 1: PLATE (BOTTOM) ===== */}
           <rect x="10" y={475.571} fill="#fefae9" width={180} height={4} />
@@ -455,31 +564,4 @@ const styles: { [key: string]: React.CSSProperties } = {
   },
 };
 
-// ===== STYLES OBJECTS =====
-const styles: { [key: string]: React.CSSProperties } = {
-  container: {
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    minHeight: "100vh",
-    width: "100%",
-    background: "#1c1a24",
-  },
-  cakeWrapper: {
-    position: "relative",
-    width: "200px",
-    height: "500px",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    overflow: "hidden",
-  },
-  cake: {
-    display: "block",
-    position: "relative",
-    width: "100%",
-    height: "100%",
-  },
-};
-
-export default CakeAssembly;  // ✅ ADD THIS LINE
+export default CakeAssembly;
