@@ -61,30 +61,30 @@ body {
   margin-left: -110px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
   opacity: 0;
-  transform: translateY(-300px);
+  transform: translateY(-300px) scaleX(0.5);
   animation: dropInPlate 500ms 0.2s ease-out forwards;
 }
 
 @keyframes dropInPlate {
   0% {
     opacity: 0;
-    transform: translateY(-300px);
+    transform: translateY(-300px) scaleX(0.3);
   }
   60% {
     opacity: 1;
-    transform: translateY(8px);
+    transform: translateY(8px) scaleX(1.05);
   }
   80% {
-    transform: translateY(-3px);
+    transform: translateY(-3px) scaleX(0.98);
   }
   100% {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(0) scaleX(1);
   }
 }
 
 /* ==============================================
-   CAKE LAYERS
+   CAKE LAYERS - FIXED 'T' SHAPE
    ============================================== */
 
 .layer {
@@ -98,8 +98,8 @@ body {
   margin-left: -90px;
   overflow: hidden;
   opacity: 0;
-  transform: translateY(-300px);
-  animation: dropInLayer 500ms 1.5s ease-out forwards;
+  transform: translateY(-300px) scaleX(0.3);
+  animation: dropInLayer 500ms ease-out forwards;
 }
 
 /* Different layers with different delays */
@@ -118,23 +118,23 @@ body {
 @keyframes dropInLayer {
   0% {
     opacity: 0;
-    transform: translateY(-300px) scaleY(0.5);
+    transform: translateY(-300px) scaleX(0.2) scaleY(0.5);
   }
   50% {
     opacity: 1;
-    transform: translateY(15px) scaleY(1.1);
+    transform: translateY(15px) scaleX(1.1) scaleY(1.05);
   }
   75% {
-    transform: translateY(-5px) scaleY(0.95);
+    transform: translateY(-5px) scaleX(0.97) scaleY(0.98);
   }
   100% {
     opacity: 1;
-    transform: translateY(0) scaleY(1);
+    transform: translateY(0) scaleX(1) scaleY(1);
   }
 }
 
 /* ==============================================
-   CREAM / FILLING
+   CREAM / FILLING - FIXED 'T' SHAPE
    ============================================== */
 
 .cream {
@@ -144,30 +144,30 @@ body {
   height: 10px;
   background: #533d3a;
   opacity: 0;
-  transform: translateY(-300px);
+  transform: translateY(-300px) scaleX(0.2);
   animation: dropInCream 500ms 2.5s ease-out forwards;
 }
 
 @keyframes dropInCream {
   0% {
     opacity: 0;
-    transform: translateY(-300px);
+    transform: translateY(-300px) scaleX(0.1);
   }
-  60% {
+  50% {
     opacity: 1;
-    transform: translateY(10px);
+    transform: translateY(10px) scaleX(1.1);
   }
-  80% {
-    transform: translateY(-3px);
+  75% {
+    transform: translateY(-3px) scaleX(0.97);
   }
   100% {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(0) scaleX(1);
   }
 }
 
 /* ==============================================
-   CHOCOLATE / FROSTING TOP
+   CHOCOLATE / FROSTING TOP - FIXED 'T' SHAPE
    ============================================== */
 
 .bizcocho {
@@ -180,7 +180,7 @@ body {
   left: 50%;
   margin-left: -90px;
   opacity: 0;
-  transform: translateY(-300px) scaleX(0.5);
+  transform: translateY(-300px) scaleX(0.2);
   animation: dropInChocolate 600ms 3.5s ease-out forwards;
 }
 
@@ -202,14 +202,14 @@ body {
 @keyframes dropInChocolate {
   0% {
     opacity: 0;
-    transform: translateY(-300px) scaleX(0.3);
+    transform: translateY(-300px) scaleX(0.15);
   }
   50% {
     opacity: 1;
     transform: translateY(12px) scaleX(1.1);
   }
   75% {
-    transform: translateY(-4px) scaleX(0.95);
+    transform: translateY(-4px) scaleX(0.97);
   }
   100% {
     opacity: 1;
@@ -229,7 +229,7 @@ body {
 }
 
 /* ==============================================
-   CANDLE - FIXED 'T' SHAPE ARTIFACT
+   CANDLE
    ============================================== */
 
 .velas {
@@ -249,10 +249,6 @@ body {
   z-index: 10;
 }
 
-/* 
-   🔥 FIX: Hide pseudo-elements completely until candle lands
-   No stripes visible during the drop animation
-*/
 .velas:before,
 .velas:after {
   content: "";
@@ -260,14 +256,10 @@ body {
   width: 100%;
   height: 2.22222222px;
   background: rgba(255, 0, 0, 0.5);
-  opacity: 0; /* 👈 Hidden initially */
+  opacity: 0;
   pointer-events: none;
 }
 
-/* 
-   Stripes fade in ONLY after the candle has fully landed
-   Using animation-delay to match dropIn completion
-*/
 .velas:before {
   top: 45%;
   left: 0;
@@ -280,10 +272,6 @@ body {
   animation: fadeInStripes 400ms 6.3s ease forwards;
 }
 
-/* 
-   Fade in animation for stripes
-   Smooth opacity transition from 0 to 1 with slight scale
-*/
 @keyframes fadeInStripes {
   0% {
     opacity: 0;
@@ -295,31 +283,27 @@ body {
   }
 }
 
-/* ==============================================
-   CANDLE DROP KEYFRAME
-   ============================================== */
-
 @keyframes dropInCandle {
   0% {
     opacity: 0;
-    transform: translateY(-300px) scaleX(1);
+    transform: translateY(-300px);
   }
   50% {
     opacity: 0.9;
-    transform: translateY(15px) scaleX(1);
+    transform: translateY(15px);
   }
   70% {
     opacity: 1;
-    transform: translateY(-5px) scaleX(1);
+    transform: translateY(-5px);
   }
   100% {
     opacity: 1;
-    transform: translateY(0) scaleX(1);
+    transform: translateY(0);
   }
 }
 
 /* ==============================================
-   FLAME ANIMATION
+   FLAME
    ============================================== */
 
 .fuego {
@@ -333,7 +317,6 @@ body {
   opacity: 0;
 }
 
-/* Flame starts AFTER candle lands (6.3s + small delay) */
 .fuego:nth-child(1) {
   animation: fuego 2s 6.6s infinite;
 }
@@ -349,10 +332,6 @@ body {
 .fuego:nth-child(5) {
   animation: fuego 0.2s 6.6s infinite;
 }
-
-/* ==============================================
-   FLAME KEYFRAMES
-   ============================================== */
 
 @keyframes fuego {
   0%, 100% {
@@ -370,7 +349,7 @@ body {
 }
 
 /* ==============================================
-   TEXT (Optional)
+   TEXT
    ============================================== */
 
 .text {
