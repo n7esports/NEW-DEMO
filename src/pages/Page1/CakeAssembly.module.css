@@ -1,64 +1,45 @@
 .cakeContainer {
-  position: relative;
-  width: 200px;
-  height: 140px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-end;
 }
 
-/* Candle & drop animation */
+/* ---------- Candle & flame ---------- */
 .candle {
-  position: absolute;
-  top: 15px;
-  width: 8px;
-  height: 35px;
-  background-color: #ffffff;
-  border-radius: 3px;
-  z-index: 4;
-  animation: dropIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-}
-
-.candleStatic {
-  animation: none;
-  transform: translateY(0);
-  opacity: 1;
+  position: relative;
+  width: 10px;
+  height: 42px;
+  background: linear-gradient(180deg, #ffffff, #e9e4f0);
+  border-radius: 4px;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.35);
+  z-index: 5;
 }
 
 .flame {
   position: absolute;
-  top: -16px;
+  top: -20px;
   left: 50%;
   transform: translateX(-50%);
-  width: 10px;
-  height: 16px;
-  background-color: var(--color-accent-gold);
+  width: 13px;
+  height: 20px;
   border-radius: 50% 50% 35% 35%;
-  box-shadow: 0 0 12px var(--color-accent-gold), 0 0 25px var(--color-accent-gold);
-  opacity: 0;
-  animation:
-    fadeIn 0.4s ease-in 0.6s forwards,
-    flicker 1.2s infinite ease-in-out alternate 1s;
+  background: radial-gradient(circle at 50% 30%, #fff6c9, var(--color-accent-gold) 70%);
+  box-shadow: 0 0 14px var(--color-accent-gold), 0 0 30px rgba(252, 227, 138, 0.6);
+  animation: flicker 1.1s ease-in-out infinite alternate;
   transition:
-    transform 0.5s ease,
-    opacity 0.5s ease;
-}
-
-.flameStatic {
-  opacity: 1;
-  animation: none;
+    transform 0.45s ease,
+    opacity 0.45s ease;
 }
 
 .flameOut {
   transform: translateX(-50%) scale(0);
-  opacity: 0 !important;
-  animation: none !important;
+  opacity: 0;
+  animation: none;
 }
 
 .smoke {
   position: absolute;
-  top: -20px;
+  top: -22px;
   left: 50%;
   width: 6px;
   height: 6px;
@@ -67,85 +48,96 @@
   animation: smokeRise 1.4s ease-out forwards;
 }
 
-/* Frosting & cake base */
-.frosting {
+/* ---------- Chocolate drizzle ---------- */
+.chocolate {
+  position: relative;
+  width: 190px;
+  height: 20px;
+  margin-top: -4px;
+  background: linear-gradient(180deg, #5a3826, #2f1c12);
+  border-radius: 12px 12px 4px 4px;
+  box-shadow: inset 0 -3px 6px rgba(0, 0, 0, 0.4);
+  z-index: 4;
+}
+
+.drip {
   position: absolute;
-  top: 48px;
-  width: 160px;
+  top: 100%;
+  width: 10px;
   height: 22px;
-  background-color: #f7f0ea;
-  border-radius: 10px 10px 6px 6px;
+  background: linear-gradient(180deg, #4a2c1c, #2f1c12);
+  border-radius: 0 0 50% 50%;
+  transform: translateX(-50%);
+}
+
+/* ---------- Cream / frosting ---------- */
+.cream {
+  width: 200px;
+  height: 16px;
+  margin-top: -3px;
+  background: linear-gradient(180deg, #fff7ea, #ffe6c9);
+  border-radius: 999px;
+  box-shadow: inset 0 -2px 4px rgba(0, 0, 0, 0.08);
   z-index: 3;
 }
 
-.frosting::before {
-  content: '';
-  position: absolute;
-  bottom: -8px;
-  left: 0;
-  width: 100%;
-  height: 12px;
-  background: radial-gradient(circle at 10px 0, #f7f0ea 12px, transparent 13px);
-  background-size: 20px 20px;
-  background-repeat: repeat-x;
+/* ---------- Dough layers ---------- */
+.body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-.cakeBody {
-  position: relative;
-  width: 160px;
-  height: 55px;
-  background-color: #7a5c58;
-  border-radius: 0 0 4px 4px;
-  overflow: hidden;
+.layer {
+  width: 210px;
+  height: 38px;
+  margin-top: -2px;
+  background:
+    repeating-linear-gradient(
+      0deg,
+      rgba(0, 0, 0, 0.06) 0px,
+      rgba(0, 0, 0, 0.06) 2px,
+      transparent 2px,
+      transparent 6px
+    ),
+    linear-gradient(180deg, #d9a86c, #b87f45);
+  border-radius: 6px;
+  box-shadow: inset 0 -8px 10px rgba(0, 0, 0, 0.2);
   z-index: 2;
 }
 
-.layerStripe {
-  position: absolute;
-  top: 22px;
-  width: 100%;
-  height: 10px;
-  background-color: #533d3a;
+.layerTop {
+  width: 195px;
+  height: 34px;
+  background:
+    repeating-linear-gradient(
+      0deg,
+      rgba(0, 0, 0, 0.06) 0px,
+      rgba(0, 0, 0, 0.06) 2px,
+      transparent 2px,
+      transparent 6px
+    ),
+    linear-gradient(180deg, #e7bd8a, #c99a5e);
 }
 
+/* ---------- Plate ---------- */
 .plate {
-  width: 190px;
-  height: 6px;
-  background-color: #433c4a;
-  border-radius: 10px;
+  width: 240px;
+  height: 14px;
+  margin-top: -2px;
+  border-radius: 50%;
+  background: radial-gradient(ellipse at 35% 30%, #ffffff, #d8d0e8 70%);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.45);
   z-index: 1;
 }
 
-@keyframes dropIn {
-  0% {
-    transform: translateY(-200px);
-    opacity: 0;
-  }
-  100% {
-    transform: translateY(0);
-    opacity: 1;
-  }
-}
-
-@keyframes fadeIn {
-  to {
-    opacity: 1;
-  }
-}
-
+/* ---------- Animations ---------- */
 @keyframes flicker {
   0% {
     transform: translateX(-50%) scale(1) rotate(-1deg);
-    opacity: 1;
-  }
-  50% {
-    transform: translateX(-50%) scale(0.92) rotate(1deg);
-    opacity: 0.85;
   }
   100% {
-    transform: translateX(-50%) scale(1.08) rotate(-0.5deg);
-    box-shadow: 0 0 16px var(--color-accent-gold), 0 0 32px var(--color-accent-gold);
-    opacity: 1;
+    transform: translateX(-50%) scale(1.08) rotate(1deg);
   }
 }
 
