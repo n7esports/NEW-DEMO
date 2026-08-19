@@ -13,6 +13,7 @@ function Router() {
   if (currentPage === 1) return <Page1 onComplete={next} />
   if (currentPage === 2) return <Page2 onComplete={next} />
   if (currentPage === 3) return <Page3 onComplete={next} />
+  if (currentPage === 4) return <Page4 onComplete={next} />
 
   // Pages 4–6 are built next, page by page. This placeholder keeps the
   // state machine navigable in the meantime.
