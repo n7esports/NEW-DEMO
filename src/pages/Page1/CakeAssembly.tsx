@@ -383,12 +383,18 @@ const CakeAssembly: React.FC<CakeAssemblyProps> = ({
           <rect x="10" y={475.571} fill="#fefae9" width={180} height={4} />
         </svg>
 
-        {/* ====== TEXT ====== */}
-        <div className="text" style={styles.text}>
-          <h1 style={styles.h1}>happy birthday!</h1>
-          <p style={styles.p}>Jonas</p>
-        </div>
-      </div>
+      {/* ====== TEXT ====== */}
+.text {
+  color: #8b6a60;
+  font-family: 'Lato', sans-serif;
+  font-weight: 300;
+  font-style: italic;
+  text-align: center;
+}
+
+.text h1 {
+  font-size: 1.4em;
+}
 
       {/* ====== CSS ANIMATIONS ====== */}
       <style>{`
