@@ -15,13 +15,12 @@ function Router() {
   if (currentPage === 3) return <Page3 onComplete={next} />
   if (currentPage === 4) return <Page4 onComplete={next} />
 
-  // Pages 4–6 are built next, page by page. This placeholder keeps the
-  // state machine navigable in the meantime.
+  // Pages 5–6 are built next. This placeholder keeps the state machine navigable.
   return (
     <div className={styles.placeholder}>
       <p className={styles.placeholderEmoji}>🚧</p>
       <h1>Page {currentPage} is coming soon</h1>
-      <p>The DOB vault, letter, and finale are built next.</p>
+      <p>The letter and finale are built next.</p>
       <button type="button" className={styles.replayBtn} onClick={() => dispatch({ type: 'SET_STATE', payload: 'page1-countdown' })}>
         ↺ Replay Page 1
       </button>
