@@ -4,8 +4,8 @@ import { Page1 } from './pages/Page1/Page1'
 import { Page2 } from './pages/Page2/Page2'
 import { Page3 } from './pages/Page3/Page3'
 import { Page4 } from './pages/page4/Page4'
-import { Page5 } from './pages/Page5/Page5'  
-import { Page6 } from './pages/Page6/Page6' 
+import { Page5 } from './pages/Page5/Page5'
+import { Page6 } from './pages/Page6/Page6'
 import styles from './App.module.css'
 
 function Router() {
@@ -16,8 +16,8 @@ function Router() {
   if (currentPage === 2) return <Page2 onComplete={next} />
   if (currentPage === 3) return <Page3 onComplete={next} />
   if (currentPage === 4) return <Page4 onComplete={next} />
-  if (currentPage === 5) return <Page5 />  
-  if (currentPage === 6) return <Page6 />  
+  if (currentPage === 5) return <Page5 onComplete={next} />  // ✅ Added onComplete
+  if (currentPage === 6) return <Page6 onComplete={next} />  // ✅ Added onComplete
 
   return (
     <div className={styles.placeholder}>
