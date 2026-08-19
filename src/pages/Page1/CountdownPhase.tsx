@@ -32,6 +32,7 @@ export function CountdownPhase({ targetDate, onComplete }: CountdownPhaseProps) 
   const { beep } = useBeep()
   const prefersReducedMotion = useReducedMotion()
   const lastBeepedSecond = useRef<number | null>(null)
+  const [isSkipped, setIsSkipped] = useState(false)
 
   // Ticks continuously against the real clock, so it survives tab throttling,
   // refreshes, and works correctly no matter when the page is opened.
@@ -63,13 +64,21 @@ export function CountdownPhase({ targetDate, onComplete }: CountdownPhaseProps) 
 
   const reachedZero = remainingMs <= 0
   useEffect(() => {
-    if (reachedZero) {
+    if (reachedZero && !isSkipped) {
       const timeout = window.setTimeout(onComplete, 1100)
       return () => window.clearTimeout(timeout)
     }
     // Only re-fires when reachedZero flips from false -> true, not on every tick.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [reachedZero])
+  }, [reachedZero, isSkipped])
+
+  // Handle skip button - immediately completes the countdown and goes to next page
+  const handleSkip = () => {
+    setIsSkipped(true)
+    setRemainingMs(0)
+    // Immediately call onComplete to go to next page
+    onComplete()
+  }
 
   // --- Final 10 seconds: the big spring-bounce number, ticking every second ---
   if (remainingMs <= FINAL_STRETCH_MS) {
@@ -89,6 +98,13 @@ export function CountdownPhase({ targetDate, onComplete }: CountdownPhaseProps) 
           </motion.div>
         </AnimatePresence>
         <p className={styles.label}>{secondsLeft > 0 ? 'Get ready…' : 'Happy Birthday!'}</p>
+        {/* DEV SKIP BUTTON */}
+        <button 
+          className={styles.skipButton} 
+          onClick={handleSkip}
+        >
+          Dev: Skip Timing
+        </button>
       </div>
     )
   }
@@ -119,6 +135,13 @@ export function CountdownPhase({ targetDate, onComplete }: CountdownPhaseProps) 
           </div>
         ))}
       </div>
+      {/* DEV SKIP BUTTON */}
+      <button 
+        className={styles.skipButton} 
+        onClick={handleSkip}
+      >
+        Dev: Skip Timing
+      </button>
     </div>
   )
 }
