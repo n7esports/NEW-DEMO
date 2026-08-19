@@ -10,6 +10,7 @@ html,
 body {
   width: 100%;
   height: 100%;
+  overflow: hidden; /* 🔥 Prevent scrollbars from showing elements outside */
 }
 
 body {
@@ -23,7 +24,7 @@ body {
 }
 
 /* ==============================================
-   WRAPPER
+   WRAPPER - CLIP TO HIDE OUTSIDE ELEMENTS
    ============================================== */
 
 .cake-wrapper {
@@ -33,6 +34,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
+  overflow: visible; /* Allow elements to be outside but hidden by body */
 }
 
 /* ==============================================
@@ -60,24 +62,29 @@ body {
   left: 50%;
   margin-left: -110px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-  opacity: 0;
-  transform: translateY(-300px);
+  
+  /* 🔥 Start far above the screen */
+  transform: translateY(-800px);
   animation: dropInPlate 500ms 0.2s ease-out forwards;
 }
 
 @keyframes dropInPlate {
   0% {
-    opacity: 0;
-    transform: translateY(-300px);
+    transform: translateY(-800px);
+  }
+  60% {
+    transform: translateY(10px);
+  }
+  80% {
+    transform: translateY(-3px);
   }
   100% {
-    opacity: 1;
     transform: translateY(0);
   }
 }
 
 /* ==============================================
-   CAKE LAYERS - FIXED 'T' SHAPE
+   CAKE LAYERS - COME FROM OUTSIDE
    ============================================== */
 
 .layer {
@@ -91,9 +98,8 @@ body {
   margin-left: -90px;
   overflow: hidden;
   
-  /* 🔥 FIX: Start fully hidden and invisible */
-  opacity: 0;
-  transform: translateY(-300px);
+  /* 🔥 Start far above the screen */
+  transform: translateY(-800px);
   animation: dropInLayer 500ms ease-out forwards;
 }
 
@@ -112,24 +118,21 @@ body {
 
 @keyframes dropInLayer {
   0% {
-    opacity: 0;
-    transform: translateY(-300px);
+    transform: translateY(-800px);
   }
   60% {
-    opacity: 1;
     transform: translateY(10px);
   }
   80% {
     transform: translateY(-3px);
   }
   100% {
-    opacity: 1;
     transform: translateY(0);
   }
 }
 
 /* ==============================================
-   CREAM / FILLING - FIXED 'T' SHAPE
+   CREAM / FILLING
    ============================================== */
 
 .cream {
@@ -139,32 +142,28 @@ body {
   height: 10px;
   background: #533d3a;
   
-  /* 🔥 FIX: Start fully hidden */
-  opacity: 0;
-  transform: translateY(-300px);
+  /* 🔥 Start far above the screen */
+  transform: translateY(-800px);
   animation: dropInCream 500ms 2.5s ease-out forwards;
 }
 
 @keyframes dropInCream {
   0% {
-    opacity: 0;
-    transform: translateY(-300px);
+    transform: translateY(-800px);
   }
   60% {
-    opacity: 1;
     transform: translateY(10px);
   }
   80% {
     transform: translateY(-3px);
   }
   100% {
-    opacity: 1;
     transform: translateY(0);
   }
 }
 
 /* ==============================================
-   CHOCOLATE / FROSTING TOP - FIXED 'T' SHAPE
+   CHOCOLATE / FROSTING TOP
    ============================================== */
 
 .bizcocho {
@@ -177,9 +176,8 @@ body {
   left: 50%;
   margin-left: -90px;
   
-  /* 🔥 FIX: Start fully hidden */
-  opacity: 0;
-  transform: translateY(-300px);
+  /* 🔥 Start far above the screen */
+  transform: translateY(-800px);
   animation: dropInChocolate 600ms 3.5s ease-out forwards;
 }
 
@@ -200,18 +198,15 @@ body {
 
 @keyframes dropInChocolate {
   0% {
-    opacity: 0;
-    transform: translateY(-300px);
+    transform: translateY(-800px);
   }
   60% {
-    opacity: 1;
     transform: translateY(10px);
   }
   80% {
     transform: translateY(-4px);
   }
   100% {
-    opacity: 1;
     transform: translateY(0);
   }
 }
@@ -239,9 +234,10 @@ body {
   margin-top: -8.33333333px;
   width: 5px;
   height: 35px;
-  transform: translateY(-300px);
   backface-visibility: hidden;
-  opacity: 0;
+  
+  /* 🔥 Start far above the screen */
+  transform: translateY(-800px);
   animation: dropInCandle 600ms 5.5s ease-out forwards;
   z-index: 10;
 }
@@ -280,18 +276,15 @@ body {
 
 @keyframes dropInCandle {
   0% {
-    opacity: 0;
-    transform: translateY(-300px);
+    transform: translateY(-800px);
   }
   60% {
-    opacity: 1;
     transform: translateY(10px);
   }
   80% {
     transform: translateY(-5px);
   }
   100% {
-    opacity: 1;
     transform: translateY(0);
   }
 }
