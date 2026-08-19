@@ -54,7 +54,7 @@ export function Page1({ onComplete }: Page1Props) {
 
       {showCakeScene && (
         <div className={styles.cakeScene}>
-          <CakeAssembly blown={blown} onAssembled={handleAssembled} />
+          <CakeAssembly />
           {assembled && phase === 'cakeAssembly' && (
             <button type="button" className={styles.cta} onClick={hasWished ? handleBlowOut : () => setPhase('wish')}>
               {hasWished ? 'Blow Out the Candle 🕯️' : '🎂 Make a Wish'}
