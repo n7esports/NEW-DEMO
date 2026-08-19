@@ -1,0 +1,13 @@
+.noButton {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 16px 32px;
+  border-radius: 999px;
+  font-size: 18px;
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  cursor: pointer;
+  transition:
+    left 0.25s ease,
+    top 0.25s ease;
+  z-index: 50;
+}

@@ -1,0 +1,66 @@
+.card {
+  width: min(480px, 100%);
+  padding: var(--spacing-xl);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+}
+
+.paper {
+  cursor: pointer;
+  min-height: 220px;
+}
+
+.handwrittenText {
+  font-family: var(--font-script);
+  font-size: 22px;
+  line-height: 1.6;
+  color: #f3e9da;
+  white-space: pre-wrap;
+  margin: 0;
+}
+
+.cursor {
+  display: inline-block;
+  animation: blink 0.9s steps(1) infinite;
+  color: var(--color-accent-gold);
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+.skipHint {
+  margin: var(--spacing-sm) 0 0;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--spacing-md);
+}
+
+.primaryBtn {
+  background: linear-gradient(135deg, var(--color-accent-pink), var(--color-accent-magenta));
+  border: none;
+  color: white;
+  font-weight: 700;
+  padding: 10px 26px;
+  border-radius: 999px;
+  cursor: pointer;
+  box-shadow: 0 0 30px rgba(255, 117, 160, 0.35);
+}
+
+.secondaryBtn {
+  background: var(--color-glass-bg);
+  border: 1px solid var(--color-glass-border);
+  color: white;
+  font-weight: 600;
+  padding: 10px 22px;
+  border-radius: 999px;
+  cursor: pointer;
+}
