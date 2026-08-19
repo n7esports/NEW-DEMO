@@ -64,13 +64,13 @@ body {
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
   
   /* 🔥 Start far above the screen */
-  transform: translateY(-800px);
+  transform: translateY(-1800px);
   animation: dropInPlate 500ms 0.2s ease-out forwards;
 }
 
 @keyframes dropInPlate {
   0% {
-    transform: translateY(-800px);
+    transform: translateY(-1500px);
   }
   60% {
     transform: translateY(10px);
