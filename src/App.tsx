@@ -3,7 +3,7 @@ import { CustomCursor } from './components/CustomCursor/CustomCursor'
 import { Page1 } from './pages/Page1/Page1'
 import { Page2 } from './pages/Page2/Page2'
 import { Page3 } from './pages/Page3/Page3'
-import { Page4 } from './pages/Page4/Page4'
+import { Page4 } from './pages/page4/Page4'
 import styles from './App.module.css'
 
 function Router() {
