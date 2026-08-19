@@ -1,11 +1,16 @@
 @import url('https://fonts.googleapis.com/css?family=Lato:300italic');
 
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
 html,
 body {
   width: 100%;
   height: 100%;
-  margin: 0;
-  padding: 0;
+  overflow: hidden;
 }
 
 body {
@@ -16,27 +21,31 @@ body {
   font-family: 'Lato', sans-serif;
 }
 
-/* ============================================== Main Layout & Card
-*/
+/* ==============================================
+   WRAPPER
+   ============================================== */
 
-.card {
+.cake-wrapper {
+  position: relative;
+  width: 200px;
+  height: 500px;
   display: flex;
-  flex-direction: column;
-  align-items: center;
   justify-content: center;
+  align-items: center;
+  overflow: hidden;
 }
 
 #cake {
   display: block;
   position: relative;
-  width: 250px;
-  height: 200px;
+  width: 100%;
+  height: 100%;
 }
 
-/* ============================================== Cake Base Structure
-*/
+/* ==============================================
+   PLATE
+   ============================================== */
 
-/* Plate */
 .plate {
   width: 220px;
   height: 10px;
@@ -48,11 +57,32 @@ body {
   margin-left: -110px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
   opacity: 0;
-  transform: translateY(-300px);
-  animation: in 500ms 0.5s ease-out forwards;
+  transform: translateY(-1500px);
+  animation: dropInPlate 500ms 0.2s ease-out forwards;
 }
 
-/* Base Cake Body */
+@keyframes dropInPlate {
+  0% {
+    opacity: 0;
+    transform: translateY(-1500px);
+  }
+  60% {
+    opacity: 1;
+    transform: translateY(10px);
+  }
+  80% {
+    transform: translateY(-3px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ==============================================
+   CAKE LAYERS
+   ============================================== */
+
 .layer {
   position: absolute;
   width: 180px;
@@ -64,11 +94,44 @@ body {
   margin-left: -90px;
   overflow: hidden;
   opacity: 0;
-  transform: translateY(-300px);
-  animation: in 500ms 1.5s ease-out forwards;
+  transform: translateY(-1500px);
+  animation: dropInLayer 500ms ease-out forwards;
 }
 
-/* Inner Cream / Dough Layer */
+.layer-bottom {
+  animation-delay: 0.3s;
+}
+
+.layer-middle {
+  animation-delay: 0.8s;
+}
+
+.layer-top {
+  animation-delay: 1.3s;
+}
+
+@keyframes dropInLayer {
+  0% {
+    opacity: 0;
+    transform: translateY(-1500px);
+  }
+  60% {
+    opacity: 1;
+    transform: translateY(10px);
+  }
+  80% {
+    transform: translateY(-3px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ==============================================
+   CREAM / FILLING
+   ============================================== */
+
 .cream {
   position: absolute;
   top: 25px;
@@ -76,11 +139,32 @@ body {
   height: 10px;
   background: #533d3a;
   opacity: 0;
-  transform: translateY(-300px);
-  animation: in 500ms 2.5s ease-out forwards;
+  transform: translateY(-1500px);
+  animation: dropInCream 500ms 2.5s ease-out forwards;
 }
 
-/* Top Chocolate & Dripping Frosting */
+@keyframes dropInCream {
+  0% {
+    opacity: 0;
+    transform: translateY(-1500px);
+  }
+  60% {
+    opacity: 1;
+    transform: translateY(10px);
+  }
+  80% {
+    transform: translateY(-3px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ==============================================
+   CHOCOLATE / FROSTING TOP
+   ============================================== */
+
 .bizcocho {
   position: absolute;
   width: 180px;
@@ -91,8 +175,8 @@ body {
   left: 50%;
   margin-left: -90px;
   opacity: 0;
-  transform: translateY(-300px);
-  animation: in 500ms 3.5s ease-out forwards;
+  transform: translateY(-1500px);
+  animation: dropInChocolate 600ms 3.5s ease-out forwards;
 }
 
 .bizcocho:after {
@@ -105,107 +189,160 @@ body {
   background: radial-gradient(circle at 10px 0, #f7f0ea 12px, transparent 13px);
   background-size: 20px 20px;
   background-repeat: repeat-x;
+  opacity: 0;
+  animation: fadeInDrips 400ms 4.2s ease forwards;
 }
 
-/* ============================================== Candle
-*/
+@keyframes dropInChocolate {
+  0% {
+    opacity: 0;
+    transform: translateY(-1500px);
+  }
+  60% {
+    opacity: 1;
+    transform: translateY(10px);
+  }
+  80% {
+    transform: translateY(-4px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInDrips {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+/* ==============================================
+   CANDLE - FIXED 'T' SHAPE
+   ============================================== */
 
 .velas {
   background: #ffffff;
   border-radius: 10px;
   position: absolute;
-  top: 65px;
+  top: 378px;
   left: 50%;
   margin-left: -2.4px;
+  margin-top: -8.33333333px;
   width: 5px;
   height: 35px;
-  transform: translateY(-300px);
   backface-visibility: hidden;
   opacity: 0;
-  animation: in 500ms 4.5s ease-out forwards;
+  transform: translateY(-1500px);
+  animation: dropInCandle 600ms 5.5s ease-out forwards;
   z-index: 10;
 }
 
-.velas:after,
-.velas:before {
-  background: rgba(255, 0, 0, 0.4);
+/* Hide stripes during drop */
+.velas:before,
+.velas:after {
   content: "";
   position: absolute;
   width: 100%;
   height: 2.22222222px;
-}
-
-.velas:after {
-  top: 25%;
-  left: 0;
+  background: rgba(255, 0, 0, 0.5);
+  opacity: 0;
+  pointer-events: none;
 }
 
 .velas:before {
   top: 45%;
   left: 0;
+  animation: fadeInStripes 400ms 6.3s ease forwards;
 }
 
-/* ============================================== Fire
-*/
+.velas:after {
+  top: 25%;
+  left: 0;
+  animation: fadeInStripes 400ms 6.3s ease forwards;
+}
+
+@keyframes fadeInStripes {
+  0% {
+    opacity: 0;
+    transform: scaleX(0.3);
+  }
+  100% {
+    opacity: 1;
+    transform: scaleX(1);
+  }
+}
+
+@keyframes dropInCandle {
+  0% {
+    opacity: 0;
+    transform: translateY(-1500px);
+  }
+  60% {
+    opacity: 1;
+    transform: translateY(10px);
+  }
+  80% {
+    transform: translateY(-5px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ==============================================
+   FLAME
+   ============================================== */
 
 .fuego {
   border-radius: 100%;
   position: absolute;
-  top: -18px;
+  top: -20px;
   left: 50%;
-  margin-left: -3.33px;
+  margin-left: -2.6px;
   width: 6.66666667px;
   height: 18px;
   opacity: 0;
 }
 
 .fuego:nth-child(1) {
-  animation: fuego 2s 5s infinite;
+  animation: fuego 2s 6.6s infinite;
 }
 .fuego:nth-child(2) {
-  animation: fuego 1.5s 5s infinite;
+  animation: fuego 1.5s 6.6s infinite;
 }
 .fuego:nth-child(3) {
-  animation: fuego 1s 5s infinite;
+  animation: fuego 1s 6.6s infinite;
 }
 .fuego:nth-child(4) {
-  animation: fuego 0.5s 5s infinite;
+  animation: fuego 0.5s 6.6s infinite;
 }
 .fuego:nth-child(5) {
-  animation: fuego 0.2s 5s infinite;
+  animation: fuego 0.2s 6.6s infinite;
 }
-
-/* ============================================== Animation Fire & Drop
-*/
 
 @keyframes fuego {
   0%, 100% {
-    background: rgba(254, 248, 97, 0.8);
-    box-shadow: 0 0 20px 6px rgba(248, 233, 209, 0.6);
-    transform: translateY(0) scale(1);
     opacity: 1;
+    background: rgba(254, 248, 97, 0.8);
+    box-shadow: 0 0 20px 5px rgba(248, 233, 209, 0.4);
+    transform: translateY(0) scale(1);
   }
   50% {
-    background: rgba(255, 50, 0, 0.3);
-    box-shadow: 0 0 30px 10px rgba(248, 233, 209, 0.4);
-    transform: translateY(-8px) scale(0.8);
     opacity: 0.8;
+    background: rgba(255, 50, 0, 0.3);
+    box-shadow: 0 0 30px 10px rgba(248, 233, 209, 0.2);
+    transform: translateY(-10px) scale(0.8);
   }
 }
 
-@keyframes in {
-  0% {
-    transform: translateY(-300px);
-    opacity: 0;
-  }
-  100% {
-    transform: translateY(0);
-    opacity: 1;
-  }
-}
-
-/* ============================================== Text
-*/
+/* ==============================================
+   TEXT
+   ============================================== */
 
 .text {
   color: #a59fae;
@@ -215,7 +352,7 @@ body {
   text-align: center;
   margin-top: 15px;
   opacity: 0;
-  animation: fadeIn 1s 5.5s forwards;
+  animation: fadeInText 1s 5.5s forwards;
 }
 
 .text h1 {
@@ -230,7 +367,7 @@ body {
   opacity: 0.8;
 }
 
-@keyframes fadeIn {
+@keyframes fadeInText {
   to {
     opacity: 1;
   }
