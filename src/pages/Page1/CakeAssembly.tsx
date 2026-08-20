@@ -1,269 +1,39 @@
-import React from "react";
+import React, { useEffect } from "react";
+import styles from "./CakeAssembly.module.css";
 
-const CakeAssembly: React.FC = () => {
+// Total time the SVG's chained SMIL <animate> sequence takes to settle
+// (bizcocho_1 → relleno_1 → bizcocho_2 → relleno_2 → bizcocho_3 → crema),
+// used to time the candle/flame entrance and the onAssembled callback so
+// nothing appears before the cake itself has finished building.
+const SVG_ASSEMBLY_MS = 4400
+const CANDLE_SETTLE_MS = 900 // candle drop-in (500ms) + a little breathing room
+const FLAME_SETTLE_MS = 500 // flame fade-in after the candle lands
+
+export interface CakeAssemblyProps {
+  /** Fired once the cake, candle, and flame have all finished appearing. */
+  onAssembled?: () => void
+  /** True once the user has clicked "Blow the Candle" — extinguishes the flame. */
+  blown?: boolean
+}
+
+const CakeAssembly: React.FC<CakeAssemblyProps> = ({ onAssembled, blown = false }) => {
+  useEffect(() => {
+    if (!onAssembled) return
+    const totalMs = SVG_ASSEMBLY_MS + CANDLE_SETTLE_MS + FLAME_SETTLE_MS
+    const timeout = window.setTimeout(onAssembled, totalMs)
+    return () => window.clearTimeout(timeout)
+  }, [onAssembled])
+
   return (
-    <div style={styles.container}>
-      {/* ====== CSS STYLES ====== */}
-      <style>{`
-        @import url(https://fonts.googleapis.com/css?family=Lato:300italic);
-
-        * {
-          margin: 0;
-          padding: 0;
-          box-sizing: border-box;
-        }
-
-        html,
-        body {
-          width: 100%;
-          height: 100%;
-          overflow: hidden;
-        }
-
-        body {
-          background: #1c1a24;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          min-height: 100vh;
-          margin: 0;
-          font-family: 'Lato', sans-serif;
-        }
-
-        /* ===== WRAPPER ===== */
-        .cake-wrapper {
-          position: relative;
-          width: 200px;
-          height: 500px;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          overflow: hidden;
-        }
-
-        #cake {
-          display: block;
-          position: relative;
-          width: 100%;
-          height: 100%;
-        }
-
-        /* ===== ALL ELEMENTS START HIDDEN OUTSIDE SCREEN ===== */
-        .plate,
-        .layer,
-        .cream,
-        .bizcocho,
-        .velas {
-          opacity: 0 !important;
-          transform: translateY(-1500px) !important;
-          animation-fill-mode: forwards !important;
-        }
-
-        /* ===== PLATE ===== */
-        .plate {
-          width: 220px;
-          height: 10px;
-          background: #433c4a;
-          border-radius: 10px;
-          position: absolute;
-          bottom: 10px;
-          left: 50%;
-          margin-left: -110px;
-          box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-          animation: dropInPlate 500ms 0.2s ease-out forwards;
-        }
-
-        @keyframes dropInPlate {
-          0% { opacity: 0; transform: translateY(-1500px); }
-          100% { opacity: 1; transform: translateY(0); }
-        }
-
-        /* ===== LAYERS ===== */
-        .layer {
-          position: absolute;
-          width: 180px;
-          height: 60px;
-          background: #7a5c58;
-          border-radius: 0 0 6px 6px;
-          bottom: 20px;
-          left: 50%;
-          margin-left: -90px;
-          overflow: hidden;
-          animation: dropInLayer 500ms ease-out forwards;
-        }
-
-        .layer-bottom { animation-delay: 0.3s; }
-        .layer-middle { animation-delay: 0.8s; }
-        .layer-top { animation-delay: 1.3s; }
-
-        @keyframes dropInLayer {
-          0% { opacity: 0; transform: translateY(-1500px); }
-          100% { opacity: 1; transform: translateY(0); }
-        }
-
-        /* ===== CREAM ===== */
-        .cream {
-          position: absolute;
-          top: 25px;
-          width: 100%;
-          height: 10px;
-          background: #533d3a;
-          animation: dropInCream 500ms 2.5s ease-out forwards;
-        }
-
-        @keyframes dropInCream {
-          0% { opacity: 0; transform: translateY(-1500px); }
-          100% { opacity: 1; transform: translateY(0); }
-        }
-
-        /* ===== CHOCOLATE ===== */
-        .bizcocho {
-          position: absolute;
-          width: 180px;
-          height: 25px;
-          background: #f7f0ea;
-          border-radius: 10px 10px 4px 4px;
-          bottom: 75px;
-          left: 50%;
-          margin-left: -90px;
-          animation: dropInChocolate 600ms 3.5s ease-out forwards;
-        }
-
-        .bizcocho:after {
-          content: "";
-          position: absolute;
-          bottom: -8px;
-          left: 0;
-          width: 100%;
-          height: 12px;
-          background: radial-gradient(circle at 10px 0, #f7f0ea 12px, transparent 13px);
-          background-size: 20px 20px;
-          background-repeat: repeat-x;
-          opacity: 0;
-          animation: fadeInDrips 400ms 4.2s ease forwards;
-        }
-
-        @keyframes dropInChocolate {
-          0% { opacity: 0; transform: translateY(-1500px); }
-          100% { opacity: 1; transform: translateY(0); }
-        }
-
-        @keyframes fadeInDrips {
-          0% { opacity: 0; }
-          100% { opacity: 1; }
-        }
-
-        /* ===== CANDLE ===== */
-        .velas {
-          background: #ffffff;
-          border-radius: 10px;
-          position: absolute;
-          top: 378px;
-          left: 50%;
-          margin-left: -2.4px;
-          margin-top: -8.33333333px;
-          width: 5px;
-          height: 35px;
-          backface-visibility: hidden;
-          animation: dropInCandle 600ms 5.5s ease-out forwards;
-          z-index: 10;
-        }
-
-        .velas:before,
-        .velas:after {
-          content: "";
-          position: absolute;
-          width: 100%;
-          height: 2.22222222px;
-          background: rgba(255, 0, 0, 0.5);
-          opacity: 0;
-          pointer-events: none;
-        }
-
-        .velas:before {
-          top: 45%;
-          left: 0;
-          animation: fadeInStripes 400ms 6.3s ease forwards;
-        }
-
-        .velas:after {
-          top: 25%;
-          left: 0;
-          animation: fadeInStripes 400ms 6.3s ease forwards;
-        }
-
-        @keyframes fadeInStripes {
-          0% { opacity: 0; }
-          100% { opacity: 1; }
-        }
-
-        @keyframes dropInCandle {
-          0% { opacity: 0; transform: translateY(-1500px); }
-          100% { opacity: 1; transform: translateY(0); }
-        }
-
-        /* ===== FLAME ===== */
-        .fuego {
-          border-radius: 100%;
-          position: absolute;
-          top: -20px;
-          left: 50%;
-          margin-left: -2.6px;
-          width: 6.66666667px;
-          height: 18px;
-          opacity: 0;
-        }
-
-        .fuego:nth-child(1) { animation: fuego 2s 6.6s infinite; }
-        .fuego:nth-child(2) { animation: fuego 1.5s 6.6s infinite; }
-        .fuego:nth-child(3) { animation: fuego 1s 6.6s infinite; }
-        .fuego:nth-child(4) { animation: fuego 0.5s 6.6s infinite; }
-        .fuego:nth-child(5) { animation: fuego 0.2s 6.6s infinite; }
-
-        @keyframes fuego {
-          0%, 100% {
-            opacity: 1;
-            background: rgba(254, 248, 97, 0.8);
-            box-shadow: 0 0 20px 5px rgba(248, 233, 209, 0.4);
-            transform: translateY(0) scale(1);
-          }
-          50% {
-            opacity: 0.8;
-            background: rgba(255, 50, 0, 0.3);
-            box-shadow: 0 0 30px 10px rgba(248, 233, 209, 0.2);
-            transform: translateY(-10px) scale(0.8);
-          }
-        }
-
-        /* ===== TEXT ===== */
-        .text {
-          color: #a59fae;
-          font-family: 'Lato', sans-serif;
-          font-weight: 300;
-          font-style: italic;
-          text-align: center;
-          margin-top: 15px;
-          opacity: 0;
-          animation: fadeInText 1s 5.5s forwards;
-        }
-
-        .text h1 { font-size: 1.4em; margin: 0; font-weight: 300; }
-        .text p { font-size: 0.9em; margin: 4px 0 0 0; opacity: 0.8; }
-
-        @keyframes fadeInText {
-          to { opacity: 1; }
-        }
-      `}</style>
-
+    <div className={styles.container}>
       {/* ===== WRAPPER ===== */}
-      <div className="cake-wrapper" style={styles.cakeWrapper}>
+      <div className={styles.cakeWrapper}>
         {/* ===== CANDLE ===== */}
-        <div className="velas">
-          <div className="fuego" />
-          <div className="fuego" />
-          <div className="fuego" />
-          <div className="fuego" />
-          <div className="fuego" />
+        <div className={styles.candle}>
+          <div className={`${styles.flameGroup} ${blown ? styles.blown : ""}`}>
+            <div className={styles.flame} />
+            <div className={styles.smoke} />
+          </div>
         </div>
 
         {/* ===== CAKE SVG - LAYERS BOTTOM TO TOP ===== */}
@@ -277,7 +47,7 @@ const CakeAssembly: React.FC = () => {
           viewBox="0 0 200 500"
           enableBackground="new 0 0 200 500"
           xmlSpace="preserve"
-          style={styles.cake}
+          className={styles.cake}
         >
           {/* ===== LAYER 1: PLATE (BOTTOM) ===== */}
           <rect x="10" y={475.571} fill="#fefae9" width={180} height={4} />
@@ -535,33 +305,6 @@ const CakeAssembly: React.FC = () => {
       </div>
     </div>
   );
-};
-
-// ===== STYLES OBJECTS =====
-const styles: { [key: string]: React.CSSProperties } = {
-  container: {
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    minHeight: "100vh",
-    width: "100%",
-    background: "#1c1a24",
-  },
-  cakeWrapper: {
-    position: "relative",
-    width: "200px",
-    height: "500px",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    overflow: "hidden",
-  },
-  cake: {
-    display: "block",
-    position: "relative",
-    width: "100%",
-    height: "100%",
-  },
 };
 
 export default CakeAssembly;

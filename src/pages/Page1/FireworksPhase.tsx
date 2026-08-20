@@ -9,7 +9,13 @@ export interface FireworksPhaseProps {
 
 const PARTICLE_COLORS = ['#FF75A0', '#FF2E93', '#FCE38A', '#FFFFFF', '#B18CFF']
 const BALLOON_COLORS = ['#FF75A0', '#FF2E93', '#FCE38A', '#B18CFF', '#4ECDC4', '#FF75A0', '#FCE38A']
-const PHASE_DURATION_MS = 4500
+// Cinematic length: enough time for several overlapping bursts to breathe,
+// rather than one or two blink-and-you-miss-it explosions.
+const PHASE_DURATION_MS = 8000
+const BURST_INTERVAL_MS = 550
+// Stop launching new bursts a little before the phase ends, so the last
+// burst has time to fully fade instead of getting cut off by the transition.
+const LAST_BURST_MARGIN_MS = 1800
 
 export function FireworksPhase({ onComplete }: FireworksPhaseProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -30,27 +36,32 @@ export function FireworksPhase({ onComplete }: FireworksPhaseProps) {
     window.addEventListener('resize', resize)
 
     const launchBurst = (x: number, y: number) => {
-      const count = 40
+      const count = 70
       for (let i = 0; i < count; i++) {
         const angle = (Math.PI * 2 * i) / count
-        const speed = 2 + Math.random() * 3
+        const speed = 2.5 + Math.random() * 3.5
         particlesRef.current.push({
           x,
           y,
           vx: Math.cos(angle) * speed,
           vy: Math.sin(angle) * speed,
           life: 0,
-          maxLife: 55 + Math.random() * 25,
+          // Longer, more varied particle lifetime so each burst lingers and
+          // trails off gracefully instead of vanishing almost instantly.
+          maxLife: 90 + Math.random() * 50,
           color: PARTICLE_COLORS[Math.floor(Math.random() * PARTICLE_COLORS.length)],
-          size: 2 + Math.random() * 2,
+          size: 2.5 + Math.random() * 2.5,
         })
       }
     }
 
     launchBurst(canvas.width / 2, canvas.height * 0.35)
     const burstTimer = window.setInterval(() => {
-      launchBurst(canvas.width * (0.2 + Math.random() * 0.6), canvas.height * (0.2 + Math.random() * 0.35))
-    }, 700)
+      launchBurst(canvas.width * (0.15 + Math.random() * 0.7), canvas.height * (0.18 + Math.random() * 0.35))
+    }, BURST_INTERVAL_MS)
+    const stopBurstsTimer = window.setTimeout(() => {
+      window.clearInterval(burstTimer)
+    }, PHASE_DURATION_MS - LAST_BURST_MARGIN_MS)
 
     const frame = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height)
@@ -74,6 +85,7 @@ export function FireworksPhase({ onComplete }: FireworksPhaseProps) {
 
     return () => {
       window.clearInterval(burstTimer)
+      window.clearTimeout(stopBurstsTimer)
       window.cancelAnimationFrame(rafRef.current)
       window.removeEventListener('resize', resize)
       particlesRef.current = []

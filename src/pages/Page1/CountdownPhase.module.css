@@ -1,237 +1,170 @@
-@import url('https://fonts.googleapis.com/css?family=Lato:300italic');
-
-html,
-body {
-  width: 100%;
-  height: 100%;
-  margin: 0;
-  padding: 0;
-}
-
-body {
-  background: #1c1a24;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-family: 'Lato', sans-serif;
-}
-
-/* ============================================== Main Layout & Card
+/* ============================================== Shared layout
+   Both the "long" (days/hours/min/sec) view and the "final stretch"
+   (big bouncing number) view fill the viewport and center their content.
 */
 
-.card {
+.longWrap,
+.wrap {
+  position: relative;
+  width: 100%;
+  min-height: 100dvh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: var(--spacing-md);
+  padding: var(--spacing-xl);
+  text-align: center;
 }
 
-#cake {
-  display: block;
-  position: relative;
-  width: 250px;
-  height: 200px;
-}
-
-/* ============================================== Cake Base Structure
+/* ============================================== Long countdown (> 10s left)
 */
 
-/* Plate */
-.plate {
-  width: 220px;
-  height: 10px;
-  background: #433c4a;
-  border-radius: 10px;
-  position: absolute;
-  bottom: 10px;
-  left: 50%;
-  margin-left: -110px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-  opacity: 0;
-  transform: translateY(-300px);
-  animation: in 500ms 0.5s ease-out forwards;
+.eyebrow {
+  margin: 0;
+  font-family: var(--font-script);
+  font-size: clamp(20px, 3vw, 28px);
+  color: var(--color-accent-gold);
+  letter-spacing: 0.02em;
 }
 
-/* Base Cake Body */
-.layer {
-  position: absolute;
-  width: 180px;
-  height: 60px;
-  background: #7a5c58;
-  border-radius: 0 0 6px 6px;
-  bottom: 20px;
-  left: 50%;
-  margin-left: -90px;
-  overflow: hidden;
-  opacity: 0;
-  transform: translateY(-300px);
-  animation: in 500ms 1.5s ease-out forwards;
+.targetLabel {
+  margin: 0 0 var(--spacing-lg);
+  font-size: clamp(28px, 5vw, 44px);
+  font-weight: 700;
+  background: linear-gradient(135deg, #fff, var(--color-accent-pink));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
 
-/* Inner Cream / Dough Layer */
-.cream {
-  position: absolute;
-  top: 25px;
-  width: 100%;
-  height: 10px;
-  background: #533d3a;
-  opacity: 0;
-  transform: translateY(-300px);
-  animation: in 500ms 2.5s ease-out forwards;
+.unitRow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-sm);
+  flex-wrap: wrap;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  background: var(--color-glass-bg);
+  border: 1px solid var(--color-glass-border);
+  border-radius: 20px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  padding: var(--spacing-lg) var(--spacing-xl);
 }
 
-/* Top Chocolate & Dripping Frosting */
-.bizcocho {
-  position: absolute;
-  width: 180px;
-  height: 25px;
-  background: #f7f0ea;
-  border-radius: 10px 10px 4px 4px;
-  bottom: 75px;
-  left: 50%;
-  margin-left: -90px;
-  opacity: 0;
-  transform: translateY(-300px);
-  animation: in 500ms 3.5s ease-out forwards;
+.unitGroup {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
 }
 
-.bizcocho:after {
-  content: "";
-  position: absolute;
-  bottom: -8px;
-  left: 0;
-  width: 100%;
-  height: 12px;
-  background: radial-gradient(circle at 10px 0, #f7f0ea 12px, transparent 13px);
-  background-size: 20px 20px;
-  background-repeat: repeat-x;
+.unit {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 64px;
 }
 
-/* ============================================== Candle
+.unitValue {
+  font-size: clamp(28px, 6vw, 48px);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: white;
+  line-height: 1;
+}
+
+.unitLabel {
+  margin-top: 6px;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.divider {
+  font-size: clamp(24px, 5vw, 36px);
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.35);
+  transform: translateY(-8px);
+}
+
+/* ============================================== Final stretch (<= 10s left)
 */
 
-.velas {
-  background: #ffffff;
-  border-radius: 10px;
-  position: absolute;
-  top: 65px;
-  left: 50%;
-  margin-left: -2.4px;
-  width: 5px;
-  height: 35px;
-  transform: translateY(-300px);
-  backface-visibility: hidden;
-  opacity: 0;
-  animation: in 500ms 4.5s ease-out forwards;
-  z-index: 10;
+.number {
+  font-size: clamp(72px, 20vw, 180px);
+  font-weight: 800;
+  line-height: 1;
+  background: linear-gradient(135deg, var(--color-accent-gold), var(--color-accent-pink));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 0 40px rgba(255, 117, 160, 0.45));
 }
 
-.velas:after,
-.velas:before {
-  background: rgba(255, 0, 0, 0.4);
-  content: "";
-  position: absolute;
-  width: 100%;
-  height: 2.22222222px;
+.label {
+  margin: var(--spacing-md) 0 0;
+  font-size: clamp(16px, 3vw, 22px);
+  color: rgba(255, 255, 255, 0.8);
 }
 
-.velas:after {
-  top: 25%;
-  left: 0;
+/* Subtle pulse on the wrap background so the last 10 seconds feel alive
+   without touching global body styles. */
+.wrap[data-parity='even'] {
+  animation: pulseEven 1s ease-in-out;
 }
 
-.velas:before {
-  top: 45%;
-  left: 0;
+.wrap[data-parity='odd'] {
+  animation: pulseOdd 1s ease-in-out;
 }
 
-/* ============================================== Fire
-*/
-
-.fuego {
-  border-radius: 100%;
-  position: absolute;
-  top: -18px;
-  left: 50%;
-  margin-left: -3.33px;
-  width: 6.66666667px;
-  height: 18px;
-  opacity: 0;
-}
-
-.fuego:nth-child(1) {
-  animation: fuego 2s 5s infinite;
-}
-.fuego:nth-child(2) {
-  animation: fuego 1.5s 5s infinite;
-}
-.fuego:nth-child(3) {
-  animation: fuego 1s 5s infinite;
-}
-.fuego:nth-child(4) {
-  animation: fuego 0.5s 5s infinite;
-}
-.fuego:nth-child(5) {
-  animation: fuego 0.2s 5s infinite;
-}
-
-/* ============================================== Animation Fire & Drop
-*/
-
-@keyframes fuego {
-  0%, 100% {
-    background: rgba(254, 248, 97, 0.8);
-    box-shadow: 0 0 20px 6px rgba(248, 233, 209, 0.6);
-    transform: translateY(0) scale(1);
-    opacity: 1;
-  }
-  50% {
-    background: rgba(255, 50, 0, 0.3);
-    box-shadow: 0 0 30px 10px rgba(248, 233, 209, 0.4);
-    transform: translateY(-8px) scale(0.8);
-    opacity: 0.8;
-  }
-}
-
-@keyframes in {
+@keyframes pulseEven {
   0% {
-    transform: translateY(-300px);
-    opacity: 0;
+    background: radial-gradient(circle at 50% 50%, rgba(255, 117, 160, 0.12), transparent 60%);
   }
   100% {
-    transform: translateY(0);
-    opacity: 1;
+    background: transparent;
   }
 }
 
-/* ============================================== Text
+@keyframes pulseOdd {
+  0% {
+    background: radial-gradient(circle at 50% 50%, rgba(252, 227, 138, 0.12), transparent 60%);
+  }
+  100% {
+    background: transparent;
+  }
+}
+
+/* ============================================== Dev skip button
 */
 
-.text {
-  color: #a59fae;
-  font-family: 'Lato', sans-serif;
-  font-weight: 300;
-  font-style: italic;
-  text-align: center;
-  margin-top: 15px;
-  opacity: 0;
-  animation: fadeIn 1s 5.5s forwards;
+.skipButton {
+  margin-top: var(--spacing-lg);
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px dashed rgba(255, 255, 255, 0.3);
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 13px;
+  padding: 8px 16px;
+  border-radius: 999px;
+  cursor: pointer;
 }
 
-.text h1 {
-  font-size: 1.4em;
-  margin: 0;
-  font-weight: 300;
+.skipButton:hover {
+  background: rgba(255, 255, 255, 0.15);
 }
 
-.text p {
-  font-size: 0.9em;
-  margin: 4px 0 0 0;
-  opacity: 0.8;
-}
+/* ============================================== Responsive
+*/
 
-@keyframes fadeIn {
-  to {
-    opacity: 1;
+@media (max-width: 480px) {
+  .unitRow {
+    padding: var(--spacing-md) var(--spacing-lg);
+    gap: var(--spacing-xs);
+  }
+
+  .unit {
+    min-width: 48px;
   }
 }

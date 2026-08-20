@@ -4,8 +4,7 @@ import { useAppContext } from '../../context/AppContext'
 import { BIRTHDAY_TARGET } from '../../config'
 import { CountdownPhase } from './CountdownPhase'
 import { FireworksPhase } from './FireworksPhase'
-import  CakeAssembly  from './CakeAssembly'
-import { WishModal } from './WishModal'
+import CakeAssembly from './CakeAssembly'
 import { BalloonsPhase } from './BalloonsPhase'
 import type { Page1State } from './types'
 import styles from './Page1.module.css'
@@ -15,27 +14,21 @@ export interface Page1Props {
 }
 
 export function Page1({ onComplete }: Page1Props) {
-  const { userData, dispatch } = useAppContext()
+  const { userData } = useAppContext()
   const [phase, setPhase] = useState<Page1State>('countdown')
   const [assembled, setAssembled] = useState(false)
-  const [hasWished, setHasWished] = useState(false)
-  const [blown, setBlown] = useState(false)
 
+  // Fired by CakeAssembly once its entrance sequence (layers + candle +
+  // flame) has finished, so the CTA never appears before there's a candle
+  // to blow out.
   const handleAssembled = useCallback(() => setAssembled(true), [])
 
-  const handleWishSubmit = (text: string) => {
-    setHasWished(true)
-    dispatch({ type: 'UPDATE_USER_DATA', payload: { wishText: text } })
-    setPhase('cakeAssembly')
-  }
-
   const handleBlowOut = () => {
-    setBlown(true)
     setPhase('blowOut')
     window.setTimeout(() => setPhase('balloons'), 1600)
   }
 
-  const showCakeScene = phase === 'cakeAssembly' || phase === 'wish' || phase === 'blowOut'
+  const showCakeScene = phase === 'cakeAssembly' || phase === 'blowOut'
 
   return (
     <div className={styles.page}>
@@ -54,24 +47,14 @@ export function Page1({ onComplete }: Page1Props) {
 
       {showCakeScene && (
         <div className={styles.cakeScene}>
-          <CakeAssembly />
+          <CakeAssembly onAssembled={handleAssembled} blown={phase === 'blowOut'} />
           {assembled && phase === 'cakeAssembly' && (
-            <button type="button" className={styles.cta} onClick={hasWished ? handleBlowOut : () => setPhase('wish')}>
-              {hasWished ? 'Blow Out the Candle 🕯️' : '🎂 Make a Wish'}
+            <button type="button" className={styles.cta} onClick={handleBlowOut}>
+              Blow the Candle 🕯️
             </button>
           )}
         </div>
       )}
-
-      <AnimatePresence>
-        {phase === 'wish' && (
-          <WishModal
-            initialValue={userData.wishText}
-            onSubmit={handleWishSubmit}
-            onClose={() => setPhase('cakeAssembly')}
-          />
-        )}
-      </AnimatePresence>
 
       {phase === 'balloons' && <BalloonsPhase wishText={userData.wishText} onComplete={onComplete} />}
     </div>

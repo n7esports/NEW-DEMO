@@ -1,4 +1,4 @@
-export type Page1State = 'countdown' | 'fireworks' | 'cakeAssembly' | 'wish' | 'blowOut' | 'balloons'
+export type Page1State = 'countdown' | 'fireworks' | 'cakeAssembly' | 'blowOut' | 'balloons'
 
 export interface Particle {
   x: number

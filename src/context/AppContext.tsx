@@ -8,7 +8,6 @@ const STATE_TO_PAGE: Record<AppState, number> = {
   'page1-countdown': 1,
   'page1-fireworks': 1,
   'page1-cake': 1,
-  'page1-wish': 1,
   'page1-blowout': 1,
   'page1-balloons': 1,
   'page2-photobooth': 2,

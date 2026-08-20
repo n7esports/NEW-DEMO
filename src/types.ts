@@ -8,7 +8,6 @@ export type AppState =
   | 'page1-countdown'
   | 'page1-fireworks'
   | 'page1-cake'
-  | 'page1-wish'
   | 'page1-blowout'
   | 'page1-balloons'
   | 'page2-photobooth'

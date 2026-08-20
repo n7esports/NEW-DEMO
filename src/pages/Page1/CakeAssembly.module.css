@@ -1,248 +1,180 @@
-@import url(https://fonts.googleapis.com/css?family=Lato:300italic);
+/* The cake scene sits inside Page1's existing .cakeScene container, which
+   already provides the site's global background — this file must never
+   touch html/body or introduce a separate background of its own. */
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-html,
-body {
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-}
-
-body {
-  background: #1c1a24;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  margin: 0;
-  font-family: 'Lato', sans-serif;
-}
-
-/* ===== WRAPPER ===== */
-.cake-wrapper {
+.container {
   position: relative;
-  width: 200px;
-  height: 500px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  width: 100%;
+}
+
+/* Aspect-ratio-locked stage that scales the whole cake composition with the
+   viewport instead of rendering it at a tiny fixed 200x500px. Percentage
+   values on the candle/flame below are relative to this box, so they stay
+   correctly aligned to the cake at every size. */
+.cakeWrapper {
+  position: relative;
+  width: clamp(240px, 34vw, 460px);
+  aspect-ratio: 200 / 500;
   display: flex;
   justify-content: center;
   align-items: center;
-  overflow: hidden;
 }
 
-#cake {
+@media (max-width: 768px) {
+  .cakeWrapper {
+    width: clamp(200px, 52vw, 320px);
+  }
+}
+
+@media (max-width: 420px) {
+  .cakeWrapper {
+    width: clamp(170px, 62vw, 260px);
+  }
+}
+
+.cake {
   display: block;
   position: relative;
   width: 100%;
   height: 100%;
+  overflow: visible;
 }
 
-/* ===== ALL ELEMENTS START HIDDEN OUTSIDE SCREEN ===== */
-.plate,
-.layer,
-.cream,
-.bizcocho,
-.velas {
-  opacity: 0 !important;
-  transform: translateY(-15000000px) !important;
-  animation-fill-mode: forwards !important;
-}
-
-/* ===== PLATE ===== */
-.plate {
-  width: 220px;
-  height: 10px;
-  background: #433c4a;
-  border-radius: 10px;
+/* ===== Candle =====
+   Positioned as a percentage of the cake stage (not hardcoded pixels) so it
+   stays glued to the top of the frosting, centered, and in scale no matter
+   the viewport or cake size. */
+.candle {
   position: absolute;
-  bottom: 10px;
+  top: 75.6%;
   left: 50%;
-  margin-left: -110px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-  animation: dropInPlate 500ms 0.2s ease-out forwards;
+  width: 2.6%;
+  height: 7%;
+  transform: translateX(-50%);
+  background: #ffffff;
+  border-radius: 40%;
+  backface-visibility: hidden;
+  opacity: 0;
+  /* Only starts once the SVG assembly sequence (which finishes at ~4.4s)
+     has settled, so it never appears to float above an unfinished cake. */
+  animation: candleIn 500ms 4.6s ease-out forwards;
+  z-index: 3;
 }
 
-@keyframes dropInPlate {
-  0% { opacity: 0; transform: translateY(-1500px); }
-  100% { opacity: 1; transform: translateY(0); }
-}
-
-/* ===== LAYERS ===== */
-.layer {
+.candle::before,
+.candle::after {
+  content: '';
   position: absolute;
-  width: 180px;
-  height: 60px;
-  background: #7a5c58;
-  border-radius: 0 0 6px 6px;
-  bottom: 20px;
-  left: 50%;
-  margin-left: -90px;
-  overflow: hidden;
-  animation: dropInLayer 500ms ease-out forwards;
-}
-
-.layer-bottom { animation-delay: 0.3s; }
-.layer-middle { animation-delay: 0.8s; }
-.layer-top { animation-delay: 1.3s; }
-
-@keyframes dropInLayer {
-  0% { opacity: 0; transform: translateY(-1500px); }
-  100% { opacity: 1; transform: translateY(0); }
-}
-
-/* ===== CREAM ===== */
-.cream {
-  position: absolute;
-  top: 25px;
-  width: 100%;
-  height: 10px;
-  background: #533d3a;
-  animation: dropInCream 500ms 2.5s ease-out forwards;
-}
-
-@keyframes dropInCream {
-  0% { opacity: 0; transform: translateY(-1500px); }
-  100% { opacity: 1; transform: translateY(0); }
-}
-
-/* ===== CHOCOLATE ===== */
-.bizcocho {
-  position: absolute;
-  width: 180px;
-  height: 25px;
-  background: #f7f0ea;
-  border-radius: 10px 10px 4px 4px;
-  bottom: 75px;
-  left: 50%;
-  margin-left: -90px;
-  animation: dropInChocolate 600ms 3.5s ease-out forwards;
-}
-
-.bizcocho:after {
-  content: "";
-  position: absolute;
-  bottom: -8px;
   left: 0;
   width: 100%;
-  height: 12px;
-  background: radial-gradient(circle at 10px 0, #f7f0ea 12px, transparent 13px);
-  background-size: 20px 20px;
-  background-repeat: repeat-x;
+  height: 8%;
+  background: rgba(255, 0, 0, 0.45);
   opacity: 0;
-  animation: fadeInDrips 400ms 4.2s ease forwards;
+  pointer-events: none;
+  animation: fadeIn 400ms 5.3s ease forwards;
 }
 
-@keyframes dropInChocolate {
-  0% { opacity: 0; transform: translateY(-1500px); }
-  100% { opacity: 1; transform: translateY(0); }
+.candle::before {
+  top: 25%;
 }
 
-@keyframes fadeInDrips {
-  0% { opacity: 0; }
-  100% { opacity: 1; }
+.candle::after {
+  top: 45%;
 }
 
-/* ===== CANDLE ===== */
-.velas {
-  background: #ffffff;
-  border-radius: 10px;
+@keyframes candleIn {
+  0% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-140%);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+/* ===== Flame =====
+   Sits directly above the candle, sized relative to it so it scales
+   together, and never gets clipped since the stage overflow is visible. */
+.flameGroup {
   position: absolute;
-  top: 378px;
+  top: -70%;
   left: 50%;
-  margin-left: -2.4px;
-  margin-top: -8.33333333px;
-  width: 5px;
-  height: 35px;
-  backface-visibility: hidden;
-  animation: dropInCandle 600ms 5.5s ease-out forwards;
-  z-index: 10;
+  width: 220%;
+  height: 60%;
+  transform: translateX(-50%);
+  z-index: 4;
+  pointer-events: none;
 }
 
-.velas:before,
-.velas:after {
-  content: "";
+.flame {
   position: absolute;
-  width: 100%;
-  height: 2.22222222px;
-  background: rgba(255, 0, 0, 0.5);
+  bottom: 0;
+  left: 50%;
+  width: 55%;
+  height: 100%;
+  transform: translateX(-50%);
+  border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+  opacity: 0;
+  animation: flicker 1.6s 5.4s ease-in-out infinite;
+  transition: opacity 0.4s ease;
+}
+
+.flameGroup.blown .flame {
+  opacity: 0;
+  animation: none;
+}
+
+/* A soft puff of smoke plays once when the candle is blown out. */
+.smoke {
+  position: absolute;
+  bottom: 60%;
+  left: 50%;
+  width: 60%;
+  height: 60%;
+  transform: translateX(-50%);
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(220, 220, 225, 0.55), transparent 70%);
   opacity: 0;
   pointer-events: none;
 }
 
-.velas:before {
-  top: 45%;
-  left: 0;
-  animation: fadeInStripes 400ms 6.3s ease forwards;
+.flameGroup.blown .smoke {
+  animation: smokePuff 1.4s ease-out forwards;
 }
 
-.velas:after {
-  top: 25%;
-  left: 0;
-  animation: fadeInStripes 400ms 6.3s ease forwards;
+@keyframes smokePuff {
+  0% {
+    opacity: 0.8;
+    transform: translateX(-50%) translateY(0) scale(0.6);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-140%) scale(1.8);
+  }
 }
 
-@keyframes fadeInStripes {
-  0% { opacity: 0; }
-  100% { opacity: 1; }
-}
-
-@keyframes dropInCandle {
-  0% { opacity: 0; transform: translateY(-1500px); }
-  100% { opacity: 1; transform: translateY(0); }
-}
-
-/* ===== FLAME ===== */
-.fuego {
-  border-radius: 100%;
-  position: absolute;
-  top: -20px;
-  left: 50%;
-  margin-left: -2.6px;
-  width: 6.66666667px;
-  height: 18px;
-  opacity: 0;
-}
-
-.fuego:nth-child(1) { animation: fuego 2s 6.6s infinite; }
-.fuego:nth-child(2) { animation: fuego 1.5s 6.6s infinite; }
-.fuego:nth-child(3) { animation: fuego 1s 6.6s infinite; }
-.fuego:nth-child(4) { animation: fuego 0.5s 6.6s infinite; }
-.fuego:nth-child(5) { animation: fuego 0.2s 6.6s infinite; }
-
-@keyframes fuego {
-  0%, 100% {
+@keyframes flicker {
+  0%,
+  100% {
     opacity: 1;
-    background: rgba(254, 248, 97, 0.8);
-    box-shadow: 0 0 20px 5px rgba(248, 233, 209, 0.4);
-    transform: translateY(0) scale(1);
+    background: rgba(254, 248, 97, 0.85);
+    box-shadow: 0 0 20px 6px rgba(248, 233, 209, 0.5);
+    transform: translateX(-50%) translateY(0) scale(1);
   }
   50% {
-    opacity: 0.8;
-    background: rgba(255, 50, 0, 0.3);
-    box-shadow: 0 0 30px 10px rgba(248, 233, 209, 0.2);
-    transform: translateY(-10px) scale(0.8);
+    opacity: 0.85;
+    background: rgba(255, 130, 0, 0.85);
+    box-shadow: 0 0 28px 9px rgba(248, 233, 209, 0.35);
+    transform: translateX(-50%) translateY(-6%) scale(0.88);
   }
 }
 
-/* ===== TEXT ===== */
-.text {
-  color: #a59fae;
-  font-family: 'Lato', sans-serif;
-  font-weight: 300;
-  font-style: italic;
-  text-align: center;
-  margin-top: 15px;
-  opacity: 0;
-  animation: fadeInText 1s 5.5s forwards;
-}
-
-.text h1 { font-size: 1.4em; margin: 0; font-weight: 300; }
-.text p { font-size: 0.9em; margin: 4px 0 0 0; opacity: 0.8; }
-
-@keyframes fadeInText {
-  to { opacity: 1; }
+@keyframes fadeIn {
+  to {
+    opacity: 1;
+  }
 }
