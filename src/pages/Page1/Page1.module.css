@@ -1,13 +1,13 @@
 .page {
   position: relative;
   width: 100%;
-  min-height: 100dvh;
+  height: 100dvh;
   overflow: hidden;
 }
 
 .cakeScene {
   position: relative;
-  min-height: 100dvh;
+  height: 100%;
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -15,7 +15,7 @@
   justify-content: center;
   gap: var(--spacing-2xl);
   padding: var(--spacing-2xl) var(--spacing-xl);
-  overflow: visible;
+  overflow: hidden;
 }
 
 .cta {
