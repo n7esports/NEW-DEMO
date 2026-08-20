@@ -1,1 +1,495 @@
+/* ============================================================
+   ROOM SCENE
+   Cinematic 3D Birthday Room
+============================================================ */
 
+.roomScene {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100dvh;
+
+  overflow: hidden;
+
+  background:
+    radial-gradient(
+      circle at 50% 35%,
+      rgba(255, 193, 112, 0.08),
+      transparent 38%
+    ),
+    #080611;
+
+  z-index: 1;
+
+  isolation: isolate;
+}
+
+
+/* ============================================================
+   THREE.JS CANVAS
+============================================================ */
+
+.canvas {
+  position: absolute;
+  inset: 0;
+
+  width: 100%;
+  height: 100%;
+
+  display: block;
+
+  z-index: 1;
+
+  touch-action: none;
+}
+
+
+/* ============================================================
+   CINEMATIC VIGNETTE
+============================================================ */
+
+.vignette {
+  position: absolute;
+  inset: 0;
+
+  pointer-events: none;
+
+  z-index: 5;
+
+  background:
+    radial-gradient(
+      ellipse at center,
+      transparent 38%,
+      rgba(3, 2, 9, 0.08) 58%,
+      rgba(3, 2, 9, 0.62) 100%
+    );
+
+  opacity: 0.72;
+
+  transition:
+    opacity 0.6s ease;
+}
+
+
+/* ============================================================
+   WARM ROOM ATMOSPHERE
+============================================================ */
+
+.warmAtmosphere {
+  position: absolute;
+  inset: 0;
+
+  pointer-events: none;
+
+  z-index: 3;
+
+  background:
+    radial-gradient(
+      circle at 50% 65%,
+      rgba(255, 190, 105, 0.12),
+      transparent 35%
+    ),
+    radial-gradient(
+      circle at 50% 35%,
+      rgba(245, 166, 200, 0.06),
+      transparent 45%
+    );
+
+  mix-blend-mode: screen;
+
+  opacity: 1;
+
+  transition:
+    opacity 0.8s
+      cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+
+/* ============================================================
+   WINDOW / SKY GLOW
+============================================================ */
+
+.skyGlow {
+  position: absolute;
+
+  top: 0;
+  left: 50%;
+
+  width: min(70vw, 900px);
+  height: 70vh;
+
+  transform:
+    translateX(-50%)
+    translateY(-25%);
+
+  pointer-events: none;
+
+  z-index: 2;
+
+  background:
+    radial-gradient(
+      ellipse at center,
+      rgba(93, 137, 255, 0.14),
+      rgba(73, 89, 180, 0.05) 35%,
+      transparent 72%
+    );
+
+  filter: blur(20px);
+
+  opacity: 0.25;
+
+  transition:
+    opacity 1.2s
+      cubic-bezier(0.22, 1, 0.36, 1),
+    transform 1.4s
+      cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+
+/* ============================================================
+   TRANSITION OVERLAY
+============================================================ */
+
+.transitionOverlay {
+  position: absolute;
+  inset: 0;
+
+  pointer-events: none;
+
+  z-index: 20;
+
+  background:
+    radial-gradient(
+      circle at 50% 100%,
+      rgba(255, 209, 102, 0.08),
+      transparent 30%
+    ),
+    linear-gradient(
+      to bottom,
+      rgba(4, 5, 18, 0),
+      rgba(4, 5, 18, 0.08)
+    );
+
+  opacity: 0;
+
+  transition:
+    opacity 0.8s
+      cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+
+/* ============================================================
+   DUST / ATMOSPHERIC PARTICLES
+============================================================ */
+
+.atmosphere {
+  position: absolute;
+  inset: 0;
+
+  pointer-events: none;
+
+  z-index: 4;
+
+  overflow: hidden;
+
+  opacity: 0.5;
+}
+
+
+/* ============================================================
+   INDIVIDUAL DUST PARTICLE
+============================================================ */
+
+.dust {
+  position: absolute;
+
+  width: 3px;
+  height: 3px;
+
+  border-radius: 50%;
+
+  background: rgba(255, 225, 170, 0.75);
+
+  box-shadow:
+    0 0 5px rgba(255, 209, 102, 0.6),
+    0 0 12px rgba(255, 209, 102, 0.25);
+
+  animation:
+    dustFloat
+    var(--duration, 7s)
+    ease-in-out
+    infinite;
+
+  animation-delay:
+    var(--delay, 0s);
+
+  opacity:
+    var(--opacity, 0.4);
+}
+
+
+@keyframes dustFloat {
+  0% {
+    transform:
+      translate3d(
+        0,
+        20px,
+        0
+      )
+      scale(0.8);
+
+    opacity: 0;
+  }
+
+  20% {
+    opacity:
+      var(--opacity, 0.4);
+  }
+
+  50% {
+    transform:
+      translate3d(
+        15px,
+        -35px,
+        0
+      )
+      scale(1);
+  }
+
+  80% {
+    opacity:
+      var(--opacity, 0.4);
+  }
+
+  100% {
+    transform:
+      translate3d(
+        -10px,
+        -80px,
+        0
+      )
+      scale(0.65);
+
+    opacity: 0;
+  }
+}
+
+
+/* ============================================================
+   ROOM → SKY TRANSITION STATE
+============================================================ */
+
+.transitioning {
+  pointer-events: none;
+}
+
+
+/* Warm light fades away */
+
+.transitioning .warmAtmosphere {
+  opacity: 0;
+}
+
+
+/* Sky glow becomes stronger */
+
+.transitioning .skyGlow {
+  opacity: 1;
+
+  transform:
+    translateX(-50%)
+    translateY(-5%)
+    scale(1.25);
+}
+
+
+/* Vignette becomes slightly darker
+   around the edges */
+
+.transitioning .vignette {
+  opacity: 0.9;
+}
+
+
+/* ============================================================
+   EXITING ROOM STATE
+============================================================ */
+
+.exiting {
+  animation:
+    roomExit
+    2.4s
+    cubic-bezier(0.22, 1, 0.36, 1)
+    forwards;
+}
+
+
+@keyframes roomExit {
+  0% {
+    opacity: 1;
+    filter:
+      blur(0)
+      brightness(1);
+  }
+
+  55% {
+    opacity: 1;
+
+    filter:
+      blur(0.4px)
+      brightness(0.85);
+  }
+
+  100% {
+    opacity: 0;
+
+    filter:
+      blur(8px)
+      brightness(0.45);
+  }
+}
+
+
+/* ============================================================
+   SKY REVEAL
+============================================================ */
+
+.skyReveal {
+  position: absolute;
+  inset: 0;
+
+  z-index: 25;
+
+  pointer-events: none;
+
+  background:
+    radial-gradient(
+      circle at 50% 48%,
+      rgba(20, 30, 80, 0.1),
+      transparent 30%
+    ),
+    linear-gradient(
+      to bottom,
+      #030617 0%,
+      #070b24 48%,
+      #0b1230 100%
+    );
+
+  opacity: 0;
+
+  transform:
+    scale(1.08);
+
+  transition:
+    opacity 1.5s
+      cubic-bezier(0.22, 1, 0.36, 1),
+    transform 2s
+      cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+
+.skyVisible {
+  opacity: 1;
+
+  transform:
+    scale(1);
+}
+
+
+/* ============================================================
+   MOON GLOW
+============================================================ */
+
+.moonGlow {
+  position: absolute;
+
+  top: 10%;
+  right: 12%;
+
+  width: 180px;
+  height: 180px;
+
+  border-radius: 50%;
+
+  pointer-events: none;
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(255, 245, 210, 0.18) 0%,
+      rgba(255, 220, 150, 0.08) 30%,
+      transparent 70%
+    );
+
+  filter: blur(12px);
+
+  opacity: 0;
+
+  transform:
+    scale(0.7);
+
+  transition:
+    opacity 1.8s ease,
+    transform 2s
+      cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+
+.skyVisible .moonGlow {
+  opacity: 1;
+
+  transform:
+    scale(1);
+}
+
+
+/* ============================================================
+   RESPONSIVE
+============================================================ */
+
+@media (max-width: 768px) {
+  .skyGlow {
+    width: 110vw;
+    height: 65vh;
+  }
+
+  .moonGlow {
+    width: 130px;
+    height: 130px;
+
+    top: 9%;
+    right: 5%;
+  }
+
+  .vignette {
+    background:
+      radial-gradient(
+        ellipse at center,
+        transparent 30%,
+        rgba(3, 2, 9, 0.72) 100%
+      );
+  }
+}
+
+
+/* ============================================================
+   REDUCED MOTION
+============================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  .dust {
+    animation: none;
+    opacity: 0.25;
+  }
+
+  .roomScene,
+  .canvas,
+  .skyGlow,
+  .skyReveal,
+  .moonGlow,
+  .warmAtmosphere,
+  .vignette {
+    transition: none;
+    animation: none;
+  }
+}
