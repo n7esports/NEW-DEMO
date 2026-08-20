@@ -115,3 +115,33 @@ export function FireworksPhase({ onComplete }: FireworksPhaseProps) {
     </div>
   )
 }
+  return (
+    <div className={styles.wrap}>
+      <canvas ref={canvasRef} className={styles.canvas} />
+
+      <h1 className={styles.celebrationTitle} aria-hidden="true">
+        {'Happy Birthday'.split('').map((char, i) => (
+          <span
+            key={i}
+            className={styles.celebrationLetter}
+            style={{ animationDelay: `${0.4 + i * 0.05}s` }}
+          >
+            {char === ' ' ? '\u00A0' : char}
+          </span>
+        ))}
+      </h1>
+
+      <div className={styles.balloonRow} aria-hidden="true">
+        {BALLOON_COLORS.map((color, i) => (
+          <span
+            key={i}
+            className={styles.decorBalloon}
+            style={{ left: `${6 + i * 13}%`, animationDelay: `${i * 0.35}s`, background: color }}
+          />
+        ))}
+      </div>
+      <button type="button" className={styles.skip} onClick={onComplete}>
+        Skip →
+      </button>
+    </div>
+  )
