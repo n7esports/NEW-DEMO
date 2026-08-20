@@ -787,7 +787,9 @@ export default function RoomScene({
           powerPreference: 'high-performance',
         }}
       >
-
+      </Canvas>
+     </div>
+   </div>
         {/* =================================================
             BACKGROUND
         ================================================= */}
