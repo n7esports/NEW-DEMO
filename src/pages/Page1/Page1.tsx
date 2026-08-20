@@ -5,7 +5,7 @@ import { BIRTHDAY_TARGET } from '../../config'
 import { CountdownPhase } from './CountdownPhase'
 import { FireworksPhase } from './FireworksPhase'
 import CakeAssembly from './CakeAssembly'
-import { ClawMachinePhase } from './ClawMachinePhase'
+import { BallonsPhase } from './BallonsPhase'
 import type { Page1State } from './types'
 import styles from './Page1.module.css'
 
@@ -25,7 +25,7 @@ export function Page1({ onComplete }: Page1Props) {
 
     const handleBlowOut = () => {
     setPhase('blowOut')
-    window.setTimeout(() => setPhase('clawMachine'), 1600)
+    window.setTimeout(() => setPhase('BallonsPhase'), 1600)
   }
 
   const showCakeScene = phase === 'cakeAssembly' || phase === 'blowOut'
