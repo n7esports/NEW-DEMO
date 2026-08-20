@@ -17,6 +17,7 @@ import { CountdownPhase } from './CountdownPhase'
 import { FireworksPhase } from './FireworksPhase'
 import CakeAssembly from './CakeAssembly'
 
+import RoomScene from './Sky of Wishes/RoomScene'
 import SkyOfWishes from './Sky of Wishes/SkyOfWishes'
 import { useSkyTransition } from './Sky of Wishes/useSkyTransition'
 
