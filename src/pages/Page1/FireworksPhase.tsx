@@ -102,7 +102,7 @@ export function FireworksPhase({ onComplete }: FireworksPhaseProps) {
       <canvas ref={canvasRef} className={styles.canvas} />
 
       <h1 className={styles.celebrationTitle} aria-hidden="true">
-        {'Happy Birthday'.split('').map((char, i) => (
+        {'Happy Birthday, Arfa'.split('').map((char, i) => (
           <span
             key={i}
             className={styles.celebrationLetter}
