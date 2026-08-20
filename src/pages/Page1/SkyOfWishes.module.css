@@ -1,131 +1,405 @@
 .wrap {
   position: fixed;
-  top: 0;
-  left: 0;
+  inset: 0;
   width: 100%;
-  height: 100vh;
+  height: 100dvh;
+  min-height: 100vh;
   overflow: hidden;
-  background: #050817;
+  isolation: isolate;
+  background:
+    radial-gradient(circle at 50% 70%, rgba(70, 44, 100, 0.18), transparent 42%),
+    #050817;
   z-index: 100;
+  color: #fff8f0;
+  contain: layout paint;
 }
 
 .canvas {
   position: absolute;
-  top: 0;
-  left: 0;
+  inset: 0;
   width: 100%;
   height: 100%;
+  display: block;
+  z-index: 1;
+  pointer-events: none;
 }
 
-.roomOverlay {
+.roomTransitionLayer {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(
-    to bottom,
-    #1a1a2e 0%,
-    #0f0f1e 30%,
-    #0B1230 60%,
-    #050817 100%
-  );
+  inset: -8%;
+  z-index: 3;
   pointer-events: none;
+  background:
+    radial-gradient(
+      ellipse at 50% 78%,
+      rgba(255, 196, 115, 0.16) 0%,
+      rgba(95, 52, 90, 0.13) 24%,
+      rgba(15, 15, 38, 0.2) 54%,
+      rgba(5, 8, 23, 0.78) 100%
+    );
+  mix-blend-mode: normal;
+  opacity: 0.7;
+  transform-origin: center bottom;
+  animation: roomDeparture 4.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.roomTransitionLayer::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(
+      to bottom,
+      rgba(3, 4, 14, 0.95) 0%,
+      rgba(3, 4, 14, 0.42) 22%,
+      rgba(3, 4, 14, 0.08) 55%,
+      transparent 100%
+    );
+  animation: roomCeilingFade 3.2s ease-out forwards;
+}
+
+.roomTransitionLayer::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -12%;
+  width: 75%;
+  height: 45%;
+  transform: translateX(-50%);
+  background: radial-gradient(
+    ellipse,
+    rgba(255, 209, 102, 0.12),
+    transparent 70%
+  );
+  filter: blur(28px);
+  animation: roomGlowDeparture 3.4s ease-out forwards;
+}
+
+.skyVignette {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  pointer-events: none;
+  background:
+    radial-gradient(
+      ellipse at center,
+      transparent 38%,
+      rgba(1, 3, 12, 0.12) 63%,
+      rgba(1, 3, 12, 0.62) 100%
+    );
+}
+
+.finaleLabel {
+  position: absolute;
+  top: 8%;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 8;
+  pointer-events: none;
+  white-space: nowrap;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(0.55rem, 1vw, 0.8rem);
+  font-weight: 600;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  color: rgba(255, 232, 163, 0.72);
+  text-shadow:
+    0 0 8px rgba(255, 209, 102, 0.45),
+    0 0 22px rgba(255, 180, 50, 0.22);
 }
 
 .phaseText {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
   text-align: center;
   pointer-events: none;
-  z-index: 10;
+  perspective: 1000px;
 }
 
 .birthdayText {
-  font-family: 'Georgia', serif;
-  font-size: clamp(2rem, 5vw, 4rem);
-  color: #FFF8F0;
-  text-shadow: 
-    0 0 20px rgba(255, 209, 102, 0.8),
-    0 0 40px rgba(255, 209, 102, 0.5),
-    0 0 60px rgba(255, 209, 102, 0.3);
-  letter-spacing: 0.1em;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(1.65rem, 5vw, 4rem);
+  font-weight: 700;
+  color: #8a5a00;
+  letter-spacing: 0.09em;
   margin: 0;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  text-shadow:
+    0 1px 0 #ffe8a3,
+    0 0 4px rgba(255, 232, 163, 0.95),
+    0 0 12px rgba(255, 209, 102, 0.95),
+    0 0 28px rgba(255, 180, 50, 0.68),
+    0 0 52px rgba(255, 150, 30, 0.32);
 }
 
 .arfaText {
-  font-family: 'Georgia', serif;
-  font-size: clamp(3rem, 8vw, 6rem);
-  color: #FFF8F0;
-  text-shadow: 
-    0 0 30px rgba(255, 209, 102, 0.9),
-    0 0 60px rgba(255, 209, 102, 0.6),
-    0 0 90px rgba(255, 209, 102, 0.4);
+  position: relative;
+  z-index: 1;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(3rem, 8vw, 6.5rem);
+  font-weight: 700;
+  color: #6b4300;
   letter-spacing: 0.15em;
   margin: 0;
+  text-align: center;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  text-shadow:
+    0 1px 0 #ffe8a3,
+    0 0 5px rgba(255, 232, 163, 0.98),
+    0 0 15px rgba(255, 209, 102, 1),
+    0 0 35px rgba(255, 180, 50, 0.85),
+    0 0 70px rgba(255, 150, 30, 0.5);
+}
+
+.arfaText::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: -35%;
+  border-radius: 50%;
+  background: radial-gradient(
+    ellipse,
+    rgba(255, 209, 102, 0.22) 0%,
+    rgba(255, 170, 50, 0.08) 38%,
+    transparent 70%
+  );
+  filter: blur(22px);
+  pointer-events: none;
+  animation: arfaHalo 2.8s ease-in-out infinite;
+}
+
+.arfaText::after {
+  content: "";
+  position: absolute;
+  z-index: 2;
+  top: -20%;
+  left: -30%;
+  width: 22%;
+  height: 140%;
+  transform: skewX(-18deg);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 248, 220, 0.55),
+    transparent
+  );
+  filter: blur(4px);
+  opacity: 0;
+  pointer-events: none;
+  animation: arfaShimmer 4.8s ease-in-out 1.5s infinite;
 }
 
 .wishText {
-  font-family: 'Georgia', serif;
-  font-size: clamp(1rem, 2vw, 1.5rem);
-  color: #F5A6C8;
-  text-shadow: 0 0 10px rgba(245, 166, 200, 0.5);
-  margin-top: 1rem;
+  max-width: min(680px, 82vw);
+  margin: 1rem auto 0;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(0.95rem, 2vw, 1.45rem);
+  line-height: 1.7;
+  color: #d9a35a;
+  text-shadow:
+    0 0 6px rgba(255, 209, 102, 0.6),
+    0 0 18px rgba(255, 180, 50, 0.28);
 }
 
 .continueBtn {
   position: absolute;
-  bottom: 10%;
   left: 50%;
-  transform: translateX(-50%);
-  padding: 1rem 2rem;
-  font-size: 1.2rem;
-  font-family: 'Georgia', serif;
-  color: #050817;
-  background: linear-gradient(135deg, #FFD166 0%, #FFE8A3 100%);
-  border: none;
-  border-radius: 50px;
-  cursor: pointer;
+  bottom: 8%;
   z-index: 20;
-  box-shadow: 
-    0 0 20px rgba(255, 209, 102, 0.5),
-    0 0 40px rgba(255, 209, 102, 0.3);
-  transition: all 0.3s ease;
+  transform: translateX(-50%);
+  min-width: 170px;
+  padding: 0.9rem 1.65rem;
+  border: 1px solid rgba(255, 232, 163, 0.65);
+  border-radius: 999px;
+  cursor: pointer;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1.05rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: #3b2400;
+  background:
+    linear-gradient(
+      135deg,
+      #d89b2b 0%,
+      #ffd166 38%,
+      #ffe8a3 68%,
+      #d89b2b 100%
+    );
+  box-shadow:
+    0 0 18px rgba(255, 209, 102, 0.45),
+    0 0 42px rgba(255, 180, 50, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.65);
+  transition:
+    box-shadow 0.3s ease,
+    filter 0.3s ease;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .continueBtn:hover {
-  box-shadow: 
-    0 0 30px rgba(255, 209, 102, 0.7),
-    0 0 60px rgba(255, 209, 102, 0.5);
+  filter: brightness(1.08);
+  box-shadow:
+    0 0 26px rgba(255, 209, 102, 0.7),
+    0 0 60px rgba(255, 180, 50, 0.38),
+    inset 0 1px 0 rgba(255, 255, 255, 0.75);
+}
+
+.continueBtn:focus-visible {
+  outline: 2px solid #ffe8a3;
+  outline-offset: 4px;
 }
 
 .reducedMotionFallback {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  inset: 0;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  padding: 2rem;
   text-align: center;
-  z-index: 10;
+  background:
+    radial-gradient(circle at 50% 35%, rgba(56, 36, 92, 0.42), transparent 45%),
+    #050817;
+}
+
+.staticMoon {
+  position: absolute;
+  top: 13%;
+  right: 12%;
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #fffef7, #f7e8d4 72%, #dcc8b2);
+  box-shadow:
+    0 0 22px rgba(255, 248, 240, 0.42),
+    0 0 70px rgba(255, 220, 180, 0.14);
+}
+
+@keyframes roomDeparture {
+  0% {
+    opacity: 0.82;
+    transform: scale(1) translateY(0);
+    filter: blur(0);
+  }
+  55% {
+    opacity: 0.58;
+    transform: scale(1.09) translateY(-2%);
+    filter: blur(1.5px);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.24) translateY(-7%);
+    filter: blur(8px);
+  }
+}
+
+@keyframes roomCeilingFade {
+  0% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-12%);
+  }
+}
+
+@keyframes roomGlowDeparture {
+  0% {
+    opacity: 0.9;
+    transform: translateX(-50%) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-50%) scale(1.35) translateY(-20%);
+  }
+}
+
+@keyframes arfaHalo {
+  0%,
+  100% {
+    opacity: 0.62;
+    transform: scale(0.96);
+  }
+  50% {
+    opacity: 0.92;
+    transform: scale(1.04);
+  }
+}
+
+@keyframes arfaShimmer {
+  0%,
+  72%,
+  100% {
+    left: -30%;
+    opacity: 0;
+  }
+  80% {
+    left: 108%;
+    opacity: 0.75;
+  }
+  90% {
+    left: 108%;
+    opacity: 0;
+  }
 }
 
 @media (max-width: 768px) {
+  .finaleLabel {
+    top: 7%;
+    letter-spacing: 0.22em;
+    font-size: 0.55rem;
+  }
+
   .birthdayText {
-    font-size: 2rem;
+    max-width: 92vw;
+    font-size: clamp(1.45rem, 7.5vw, 2.4rem);
+    letter-spacing: 0.045em;
   }
-  
+
   .arfaText {
-    font-size: 3rem;
+    font-size: clamp(3rem, 17vw, 5rem);
+    letter-spacing: 0.1em;
   }
-  
+
   .wishText {
-    font-size: 1rem;
+    max-width: 84vw;
+    font-size: 0.98rem;
   }
-  
+
   .continueBtn {
-    bottom: 15%;
-    padding: 0.8rem 1.5rem;
-    font-size: 1rem;
+    bottom: 9%;
+    min-width: 150px;
+    padding: 0.78rem 1.35rem;
+    font-size: 0.98rem;
+  }
+
+  .staticMoon {
+    top: 10%;
+    right: 9%;
+    width: 54px;
+    height: 54px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .roomTransitionLayer,
+  .roomTransitionLayer::before,
+  .roomTransitionLayer::after,
+  .arfaText::before,
+  .arfaText::after {
+    animation: none !important;
+  }
+
+  .continueBtn {
+    transition: none;
   }
 }
