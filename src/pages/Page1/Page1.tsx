@@ -5,7 +5,7 @@ import { BIRTHDAY_TARGET } from '../../config'
 import { CountdownPhase } from './CountdownPhase'
 import { FireworksPhase } from './FireworksPhase'
 import CakeAssembly from './CakeAssembly'
-import { BalloonsPhase } from './BalloonsPhase'
+import { ClawMachinePhase } from './ClawMachinePhase'
 import type { Page1State } from './types'
 import styles from './Page1.module.css'
 
