@@ -46,7 +46,7 @@
 .birthdayText {
   font-family: 'Georgia', serif;
   font-size: clamp(2rem, 5vw, 4rem);
-  color: #FFE8A3;
+  color: #FFF8F0;
   text-shadow: 
     0 0 20px rgba(255, 209, 102, 0.8),
     0 0 40px rgba(255, 209, 102, 0.5),
