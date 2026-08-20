@@ -56,7 +56,7 @@ export function Page1({ onComplete }: Page1Props) {
         </div>
       )}
 
-      {phase === 'balloons' && <BalloonsPhase wishText={userData.wishText} onComplete={onComplete} />}
+            {phase === 'clawMachine' && <ClawMachinePhase onComplete={onComplete} />}
     </div>
   )
 }
