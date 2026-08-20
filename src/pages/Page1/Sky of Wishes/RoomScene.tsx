@@ -758,114 +758,101 @@ function CinematicCamera({
    MAIN ROOM SCENE
 ============================================================ */
 
+/* ============================================================
+   MAIN ROOM SCENE
+============================================================ */
+
 export default function RoomScene({
   transitionProgress = 0,
   interactive = false,
 }: RoomSceneProps) {
   return (
-   <div className={styles.roomScene}>
-     
-     <div className={styles.canvas}>
-  <Canvas
-    
-      <Canvas
-        shadows
-        dpr={[1, 2]}
-        camera={{
-          position: [
-            0,
-            1.1,
-            8.8,
-          ],
-          fov: 52,
-          near: 0.1,
-          far: 100,
-        }}
-        gl={{
-          antialias: true,
-          alpha: true,
-          powerPreference: 'high-performance',
-        }}
-      >
-      </Canvas>
-     </div>
-   </div>
-        {/* =================================================
-            BACKGROUND
-        ================================================= */}
+    <div className={styles.roomScene}>
+      <div className={styles.canvas}>
+        <Canvas
+          shadows
+          dpr={[1, 2]}
+          camera={{
+            position: [0, 1.1, 8.8],
+            fov: 52,
+            near: 0.1,
+            far: 100,
+          }}
+          gl={{
+            antialias: true,
+            alpha: true,
+            powerPreference: 'high-performance',
+          }}
+        >
+          {/* =================================================
+              BACKGROUND
+          ================================================= */}
 
-        <color
-          attach="background"
-          args={['#100b18']}
-        />
-
-
-        {/* =================================================
-            GLOBAL LIGHTING
-        ================================================= */}
-
-        <ambientLight
-          color="#4c3658"
-          intensity={0.65}
-        />
-
-        <hemisphereLight
-          args={[
-            '#46335f',
-            '#120d18',
-            0.7,
-          ]}
-        />
-
-
-        {/* =================================================
-            ROOM
-        ================================================= */}
-
-        <RoomInterior
-          transitionProgress={
-            transitionProgress
-          }
-        />
-
-
-        {/* =================================================
-            CINEMATIC CAMERA
-        ================================================= */}
-
-        <CinematicCamera
-          transitionProgress={
-            transitionProgress
-          }
-        />
-
-
-        {/* =================================================
-            OPTIONAL CONTROLS
-        ================================================= */}
-
-        {interactive && (
-          <OrbitControls
-            enablePan={false}
-            enableZoom={false}
-            minPolarAngle={Math.PI * 0.3}
-            maxPolarAngle={Math.PI * 0.65}
+          <color
+            attach="background"
+            args={['#100b18']}
           />
-        )}
 
+          {/* =================================================
+              GLOBAL LIGHTING
+          ================================================= */}
 
-        {/* =================================================
-            ENVIRONMENT
-        ================================================= */}
+          <ambientLight
+            color="#4c3658"
+            intensity={0.65}
+          />
 
-        <Environment
-          preset="night"
-          environmentIntensity={0.25}
-        />
+          <hemisphereLight
+            args={[
+              '#46335f',
+              '#120d18',
+              0.7,
+            ]}
+          />
 
-      </Canvas>
-     </div>
+          {/* =================================================
+              ROOM
+          ================================================= */}
 
+          <RoomInterior
+            transitionProgress={
+              transitionProgress
+            }
+          />
+
+          {/* =================================================
+              CINEMATIC CAMERA
+          ================================================= */}
+
+          <CinematicCamera
+            transitionProgress={
+              transitionProgress
+            }
+          />
+
+          {/* =================================================
+              OPTIONAL CONTROLS
+          ================================================= */}
+
+          {interactive && (
+            <OrbitControls
+              enablePan={false}
+              enableZoom={false}
+              minPolarAngle={Math.PI * 0.3}
+              maxPolarAngle={Math.PI * 0.65}
+            />
+          )}
+
+          {/* =================================================
+              ENVIRONMENT
+          ================================================= */}
+
+          <Environment
+            preset="night"
+            environmentIntensity={0.25}
+          />
+        </Canvas>
+      </div>
     </div>
   )
 }
