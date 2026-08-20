@@ -13,6 +13,8 @@ interface Particle {
   y: number
   targetX: number
   targetY: number
+  startX: number
+  startY: number
   size: number
   speed: number
   opacity: number
@@ -20,6 +22,7 @@ interface Particle {
   phase: 'rising' | 'forming' | 'holding' | 'exploding' | 'falling'
   turbulence: number
   drift: number
+  progress: number // 0 to 1 for formation animation
 }
 
 interface Firework {
@@ -62,14 +65,14 @@ class SkyOfWishesEngine {
   private petals: Petal[] = []
   private stars: { x: number; y: number; size: number; opacity: number; twinkleSpeed: number }[] = []
   private animationFrame: number | null = null
-  private phase: 'room' | 'rising' | 'formingHappy' | 'holdingHappy' | 'exploding' | 'formingArfa' | 'holdingArfa' | 'finalExplosion' | 'celebration' = 'rising'
+  private phase: 'rising' | 'formingHappy' | 'holdingHappy' | 'exploding' | 'formingArfa' | 'holdingArfa' | 'finalExplosion' | 'celebration' = 'rising'
   private phaseStartTime = 0
-  private cameraY = 0
   private moonX = 0
   private moonY = 0
   private onPhaseChange?: (phase: string) => void
-  private textParticlesTargets: Map<string, { x: number; y: number }[]> = new Map()
   private particleLevel: 'high' | 'normal' | 'low' = 'normal'
+  private textFormationParticles: Particle[] = []
+  private isForming = false
 
   constructor(canvas: HTMLCanvasElement, onPhaseChange?: (phase: string) => void) {
     this.canvas = canvas
@@ -98,9 +101,9 @@ class SkyOfWishesEngine {
 
   private getParticleCount(): number {
     switch (this.particleLevel) {
-      case 'high': return 20000
-      case 'normal': return 12000
-      case 'low': return 5000
+      case 'high': return 15000
+      case 'normal': return 8000
+      case 'low': return 4000
     }
   }
 
@@ -112,15 +115,15 @@ class SkyOfWishesEngine {
     this.canvas.style.height = `${window.innerHeight}px`
     this.ctx.scale(dpr, dpr)
     this.moonX = window.innerWidth * 0.75
-    this.moonY = window.innerHeight * 0.2
+    this.moonY = window.innerHeight * 0.15
   }
 
   private createStars() {
-    const starCount = 200
+    const starCount = 150
     for (let i = 0; i < starCount; i++) {
       this.stars.push({
         x: Math.random() * window.innerWidth,
-        y: Math.random() * window.innerHeight * 0.7,
+        y: Math.random() * window.innerHeight * 0.6,
         size: Math.random() * 2 + 0.5,
         opacity: Math.random() * 0.8 + 0.2,
         twinkleSpeed: Math.random() * 0.02 + 0.005,
@@ -136,19 +139,22 @@ class SkyOfWishesEngine {
         y: window.innerHeight + Math.random() * 200,
         targetX: 0,
         targetY: 0,
-        size: Math.random() * 3 + 1,
-        speed: Math.random() * 2 + 1,
-        opacity: Math.random() * 0.6 + 0.4,
-        color: Math.random() > 0.7 ? COLORS.brightGold : COLORS.warmGold,
+        startX: 0,
+        startY: 0,
+        size: Math.random() * 2.5 + 0.5,
+        speed: Math.random() * 1.5 + 0.5,
+        opacity: Math.random() * 0.7 + 0.3,
+        color: Math.random() > 0.6 ? COLORS.brightGold : COLORS.warmGold,
         phase: 'rising',
         turbulence: Math.random() * 20 - 10,
         drift: Math.random() * Math.PI * 2,
+        progress: 0,
       })
     }
   }
 
   private createPetals() {
-    const petalCount = 30
+    const petalCount = 25
     const colors = ['#F5A6C8', '#FFB4D9', '#FFC8DD', '#E878A5', '#FFE8A3']
     for (let i = 0; i < petalCount; i++) {
       this.petals.push({
@@ -167,84 +173,111 @@ class SkyOfWishesEngine {
   }
 
   private sampleText(text: string, fontSize: number): { x: number; y: number }[] {
+    // Create an offscreen canvas to sample text pixels
     const offscreen = document.createElement('canvas')
-    const offCtx = offscreen.getContext('2d')!
+    const offCtx = offscreen.getContext('2d', { willReadFrequently: true })!
+    
+    // Set canvas size to match screen
     offscreen.width = window.innerWidth
     offscreen.height = window.innerHeight
     
+    // Clear canvas
+    offCtx.fillStyle = 'black'
+    offCtx.fillRect(0, 0, offscreen.width, offscreen.height)
+    
+    // Draw text in white
     offCtx.fillStyle = 'white'
-    offCtx.font = `bold ${fontSize}px Georgia, serif`
+    offCtx.font = `bold ${fontSize}px 'Georgia', serif`
     offCtx.textAlign = 'center'
     offCtx.textBaseline = 'middle'
-    offCtx.fillText(text, window.innerWidth / 2, window.innerHeight / 2)
     
+    // Add letter spacing by drawing each character separately
+    const chars = text.split('')
+    const totalWidth = offCtx.measureText(text).width
+    const letterSpacing = fontSize * 0.08
+    const startX = (offscreen.width - totalWidth - (chars.length - 1) * letterSpacing) / 2
+    
+    let currentX = startX
+    chars.forEach(char => {
+      offCtx.fillText(char, currentX + totalWidth / (chars.length * 2), offscreen.height * 0.45)
+      currentX += offCtx.measureText(char).width + letterSpacing
+    })
+    
+    // Sample pixels
     const imageData = offCtx.getImageData(0, 0, offscreen.width, offscreen.height)
     const positions: { x: number; y: number }[] = []
-    const gap = this.particleLevel === 'high' ? 3 : this.particleLevel === 'normal' ? 4 : 6
+    
+    // Dynamic sampling gap based on particle level
+    const gap = this.particleLevel === 'high' ? 3 : this.particleLevel === 'normal' ? 4 : 5
     
     for (let y = 0; y < offscreen.height; y += gap) {
       for (let x = 0; x < offscreen.width; x += gap) {
-        if (imageData.data[(y * offscreen.width + x) * 4 + 3] > 128) {
+        const index = (y * offscreen.width + x) * 4
+        if (imageData.data[index + 3] > 128) {
           positions.push({ x, y })
         }
       }
     }
+    
+    // Clean up
+    offscreen.width = 0
+    offscreen.height = 0
     
     return positions
   }
 
   private formText(text: string, fontSize: number) {
     const targets = this.sampleText(text, fontSize)
-    const availableParticles = this.particles.filter(p => p.phase !== 'exploding' && p.phase !== 'falling')
     
-    if (availableParticles.length < targets.length) {
-      // Add more particles if needed
-      const needed = targets.length - availableParticles.length
-      for (let i = 0; i < needed; i++) {
-        this.particles.push({
-          x: Math.random() * window.innerWidth,
-          y: Math.random() * window.innerHeight,
-          targetX: 0,
-          targetY: 0,
-          size: Math.random() * 2 + 1,
-          speed: Math.random() * 2 + 1,
-          opacity: Math.random() * 0.6 + 0.4,
-          color: Math.random() > 0.7 ? COLORS.brightGold : COLORS.warmGold,
-          phase: 'rising',
-          turbulence: Math.random() * 20 - 10,
-          drift: Math.random() * Math.PI * 2,
-        })
+    // Reset all particles to be available
+    this.particles.forEach(particle => {
+      if (particle.phase !== 'exploding') {
+        particle.phase = 'rising'
+        particle.progress = 0
       }
-    }
+    })
     
-    const shuffledParticles = [...availableParticles].sort(() => Math.random() - 0.5)
+    // Select particles for text formation
+    this.textFormationParticles = []
+    const shuffledParticles = [...this.particles].sort(() => Math.random() - 0.5)
+    
+    // Use only the needed number of particles
     const particlesToUse = shuffledParticles.slice(0, targets.length)
     
     particlesToUse.forEach((particle, i) => {
-      particle.targetX = targets[i].x
-      particle.targetY = targets[i].y
-      particle.phase = 'forming'
+      if (i < targets.length) {
+        particle.startX = particle.x
+        particle.startY = particle.y
+        particle.targetX = targets[i].x
+        particle.targetY = targets[i].y
+        particle.phase = 'forming'
+        particle.progress = 0
+        particle.size = Math.random() * 2 + 0.5 // Slightly smaller for text
+        this.textFormationParticles.push(particle)
+      }
     })
     
-    // Set remaining particles to rise and disperse
+    // Send remaining particles to edges
     this.particles.forEach(particle => {
       if (particle.phase === 'rising') {
-        particle.targetX = particle.x + (Math.random() - 0.5) * 400
-        particle.targetY = window.innerHeight * 0.2 + Math.random() * 100
+        particle.targetX = particle.x + (Math.random() - 0.5) * window.innerWidth
+        particle.targetY = window.innerHeight * 0.1 + Math.random() * window.innerHeight * 0.2
       }
     })
   }
 
   private explodeText() {
-    this.particles.forEach(particle => {
-      if (particle.phase === 'forming' || particle.phase === 'holding') {
-        particle.phase = 'exploding'
-        const angle = Math.random() * Math.PI * 2
-        const force = Math.random() * 10 + 5
-        particle.targetX = particle.x + Math.cos(angle) * force
-        particle.targetY = particle.y + Math.sin(angle) * force
-      }
+    this.textFormationParticles.forEach(particle => {
+      particle.phase = 'exploding'
+      const angle = Math.random() * Math.PI * 2
+      const force = Math.random() * 8 + 3
+      particle.startX = particle.x
+      particle.startY = particle.y
+      particle.targetX = particle.x + Math.cos(angle) * force * 10
+      particle.targetY = particle.y + Math.sin(angle) * force * 10
+      particle.progress = 0
     })
+    this.textFormationParticles = []
   }
 
   private createFirework(x: number, y: number) {
@@ -256,7 +289,7 @@ class SkyOfWishesEngine {
       maxAge: 2000 + Math.random() * 1000,
     }
     
-    const particleCount = this.particleLevel === 'high' ? 200 : this.particleLevel === 'normal' ? 120 : 60
+    const particleCount = this.particleLevel === 'high' ? 150 : this.particleLevel === 'normal' ? 100 : 50
     const colors = [COLORS.warmGold, COLORS.brightGold, COLORS.softPink, COLORS.rose, '#FFFFFF']
     
     for (let i = 0; i < particleCount; i++) {
@@ -267,6 +300,8 @@ class SkyOfWishesEngine {
         y,
         targetX: x + Math.cos(angle) * speed * 20,
         targetY: y + Math.sin(angle) * speed * 20,
+        startX: x,
+        startY: y,
         size: Math.random() * 2 + 0.5,
         speed,
         opacity: 1,
@@ -274,6 +309,7 @@ class SkyOfWishesEngine {
         phase: 'exploding',
         turbulence: 0,
         drift: 0,
+        progress: 0,
       })
     }
     
@@ -282,29 +318,29 @@ class SkyOfWishesEngine {
 
   private triggerFireworks() {
     const positions = [
-      { x: window.innerWidth * 0.2, y: window.innerHeight * 0.3 },
-      { x: window.innerWidth * 0.8, y: window.innerHeight * 0.25 },
-      { x: window.innerWidth * 0.5, y: window.innerHeight * 0.4 },
-      { x: window.innerWidth * 0.3, y: window.innerHeight * 0.2 },
-      { x: window.innerWidth * 0.7, y: window.innerHeight * 0.35 },
+      { x: window.innerWidth * 0.15, y: window.innerHeight * 0.25 },
+      { x: window.innerWidth * 0.85, y: window.innerHeight * 0.2 },
+      { x: window.innerWidth * 0.5, y: window.innerHeight * 0.35 },
+      { x: window.innerWidth * 0.3, y: window.innerHeight * 0.15 },
+      { x: window.innerWidth * 0.7, y: window.innerHeight * 0.3 },
     ]
     
     positions.forEach((pos, i) => {
       setTimeout(() => {
         this.createFirework(pos.x, pos.y)
-      }, i * 300)
+      }, i * 400)
     })
   }
 
   private drawMoon() {
     const ctx = this.ctx
-    const moonRadius = 60
+    const moonRadius = 50
     const glowRadius = moonRadius * 3
     
     // Moon glow
     const glowGradient = ctx.createRadialGradient(this.moonX, this.moonY, 0, this.moonX, this.moonY, glowRadius)
-    glowGradient.addColorStop(0, 'rgba(255, 248, 240, 0.3)')
-    glowGradient.addColorStop(0.4, 'rgba(255, 248, 240, 0.1)')
+    glowGradient.addColorStop(0, 'rgba(255, 248, 240, 0.4)')
+    glowGradient.addColorStop(0.4, 'rgba(255, 248, 240, 0.15)')
     glowGradient.addColorStop(1, 'rgba(255, 248, 240, 0)')
     
     ctx.fillStyle = glowGradient
@@ -325,18 +361,6 @@ class SkyOfWishesEngine {
     ctx.beginPath()
     ctx.arc(this.moonX, this.moonY, moonRadius, 0, Math.PI * 2)
     ctx.fill()
-    
-    // Moon craters
-    ctx.fillStyle = 'rgba(200, 180, 160, 0.3)'
-    ctx.beginPath()
-    ctx.arc(this.moonX - 20, this.moonY - 10, 8, 0, Math.PI * 2)
-    ctx.fill()
-    ctx.beginPath()
-    ctx.arc(this.moonX + 15, this.moonY + 20, 12, 0, Math.PI * 2)
-    ctx.fill()
-    ctx.beginPath()
-    ctx.arc(this.moonX + 25, this.moonY - 25, 6, 0, Math.PI * 2)
-    ctx.fill()
   }
 
   private drawStars(currentTime: number) {
@@ -356,8 +380,8 @@ class SkyOfWishesEngine {
       
       switch (particle.phase) {
         case 'rising':
-          y -= particle.speed * 0.5
-          x += Math.sin(currentTime * 0.001 + particle.drift) * 0.5
+          y -= particle.speed * 0.3
+          x += Math.sin(currentTime * 0.001 + particle.drift) * 0.3
           particle.x = x
           particle.y = y
           
@@ -368,17 +392,23 @@ class SkyOfWishesEngine {
           break
           
         case 'forming':
-          x += (particle.targetX - x) * 0.05
-          y += (particle.targetY - y) * 0.05
-          particle.x = x
-          particle.y = y
-          
-          if (Math.abs(particle.targetX - x) < 1 && Math.abs(particle.targetY - y) < 1) {
+          // Smooth easing formation
+          particle.progress += 0.02
+          if (particle.progress > 1) {
+            particle.progress = 1
             particle.phase = 'holding'
           }
+          
+          // Use easing function for smooth movement
+          const eased = 1 - Math.pow(1 - particle.progress, 3) // Cubic ease-out
+          x = particle.startX + (particle.targetX - particle.startX) * eased
+          y = particle.startY + (particle.targetY - particle.startY) * eased
+          particle.x = x
+          particle.y = y
           break
           
         case 'holding':
+          // Gentle floating while holding position
           x = particle.targetX + Math.sin(currentTime * 0.002 + particle.drift) * 0.5
           y = particle.targetY + Math.cos(currentTime * 0.0015 + particle.drift) * 0.5
           particle.x = x
@@ -386,18 +416,22 @@ class SkyOfWishesEngine {
           break
           
         case 'exploding':
-          x += (particle.targetX - x) * 0.1
-          y += (particle.targetY - y) * 0.1
-          particle.opacity *= 0.98
-          particle.x = x
-          particle.y = y
-          
-          if (particle.opacity < 0.05) {
+          particle.progress += 0.03
+          if (particle.progress > 1) {
+            particle.progress = 1
             particle.phase = 'rising'
             particle.opacity = Math.random() * 0.6 + 0.4
             particle.x = Math.random() * window.innerWidth
             particle.y = window.innerHeight + Math.random() * 200
+            break
           }
+          
+          const explodeEased = 1 - Math.pow(1 - particle.progress, 2)
+          x = particle.startX + (particle.targetX - particle.startX) * explodeEased
+          y = particle.startY + (particle.targetY - particle.startY) * explodeEased
+          particle.opacity = 1 - particle.progress
+          particle.x = x
+          particle.y = y
           break
       }
       
@@ -405,14 +439,14 @@ class SkyOfWishesEngine {
       const size = particle.size
       
       // Glow effect
-      const glowGradient = this.ctx.createRadialGradient(x, y, 0, x, y, size * 4)
+      const glowGradient = this.ctx.createRadialGradient(x, y, 0, x, y, size * 3)
       glowGradient.addColorStop(0, particle.color)
       glowGradient.addColorStop(1, 'transparent')
       
       this.ctx.fillStyle = glowGradient
-      this.ctx.globalAlpha = alpha * 0.3
+      this.ctx.globalAlpha = alpha * 0.2
       this.ctx.beginPath()
-      this.ctx.arc(x, y, size * 4, 0, Math.PI * 2)
+      this.ctx.arc(x, y, size * 3, 0, Math.PI * 2)
       this.ctx.fill()
       
       // Core particle
@@ -435,14 +469,15 @@ class SkyOfWishesEngine {
         const alpha = 1 - progress
         
         firework.particles.forEach(particle => {
-          const x = particle.x + (particle.targetX - particle.x) * 0.1
-          const y = particle.y + (particle.targetY - particle.y) * 0.1
-          particle.x = x
-          particle.y = y
-          particle.opacity = alpha
+          particle.progress += 0.05
+          if (particle.progress > 1) particle.progress = 1
+          
+          const eased = 1 - Math.pow(1 - particle.progress, 2)
+          const x = particle.startX + (particle.targetX - particle.startX) * eased
+          const y = particle.startY + (particle.targetY - particle.startY) * eased
           
           this.ctx.fillStyle = particle.color
-          this.ctx.globalAlpha = particle.opacity
+          this.ctx.globalAlpha = alpha
           this.ctx.beginPath()
           this.ctx.arc(x, y, particle.size, 0, Math.PI * 2)
           this.ctx.fill()
@@ -451,13 +486,12 @@ class SkyOfWishesEngine {
       }
     })
     
-    // Clean up old fireworks
     this.fireworks = this.fireworks.filter(fw => fw.age < fw.maxAge)
   }
 
   private drawPetals(currentTime: number) {
     this.petals.forEach(petal => {
-      petal.y += petal.ySpeed * 0.3
+      petal.y += petal.ySpeed * 0.2
       petal.x += petal.xSpeed + Math.sin(currentTime * 0.001 + petal.swayPhase) * 0.5
       petal.rotation += petal.rotationSpeed
       
@@ -466,13 +500,8 @@ class SkyOfWishesEngine {
         petal.x = Math.random() * window.innerWidth
       }
       
-      if (petal.x > window.innerWidth + 20) {
-        petal.x = -20
-      }
-      
-      if (petal.x < -20) {
-        petal.x = window.innerWidth + 20
-      }
+      if (petal.x > window.innerWidth + 20) petal.x = -20
+      if (petal.x < -20) petal.x = window.innerWidth + 20
       
       this.ctx.save()
       this.ctx.translate(petal.x, petal.y)
@@ -480,7 +509,6 @@ class SkyOfWishesEngine {
       this.ctx.globalAlpha = petal.opacity
       this.ctx.fillStyle = petal.color
       
-      // Draw petal shape
       this.ctx.beginPath()
       this.ctx.ellipse(0, 0, petal.size, petal.size * 0.6, 0, 0, Math.PI * 2)
       this.ctx.fill()
@@ -495,16 +523,16 @@ class SkyOfWishesEngine {
     
     switch (this.phase) {
       case 'rising':
-        if (elapsed > 3000) {
+        if (elapsed > 2500) {
           this.phase = 'formingHappy'
           this.phaseStartTime = currentTime
-          this.formText('HAPPY BIRTHDAY', 60)
+          this.formText('HAPPY BIRTHDAY', Math.min(window.innerWidth * 0.06, 48))
           this.onPhaseChange?.('formingHappy')
         }
         break
         
       case 'formingHappy':
-        if (elapsed > 2000) {
+        if (elapsed > 2500 || this.textFormationParticles.every(p => p.phase === 'holding')) {
           this.phase = 'holdingHappy'
           this.phaseStartTime = currentTime
           this.onPhaseChange?.('holdingHappy')
@@ -512,7 +540,7 @@ class SkyOfWishesEngine {
         break
         
       case 'holdingHappy':
-        if (elapsed > 2500) {
+        if (elapsed > 2000) {
           this.phase = 'exploding'
           this.phaseStartTime = currentTime
           this.explodeText()
@@ -521,16 +549,16 @@ class SkyOfWishesEngine {
         break
         
       case 'exploding':
-        if (elapsed > 1500) {
+        if (elapsed > 1200) {
           this.phase = 'formingArfa'
           this.phaseStartTime = currentTime
-          this.formText('ARFA', 80)
+          this.formText('ARFA', Math.min(window.innerWidth * 0.08, 64))
           this.onPhaseChange?.('formingArfa')
         }
         break
         
       case 'formingArfa':
-        if (elapsed > 2000) {
+        if (elapsed > 2000 || this.textFormationParticles.every(p => p.phase === 'holding')) {
           this.phase = 'holdingArfa'
           this.phaseStartTime = currentTime
           this.onPhaseChange?.('holdingArfa')
@@ -538,7 +566,7 @@ class SkyOfWishesEngine {
         break
         
       case 'holdingArfa':
-        if (elapsed > 3000) {
+        if (elapsed > 2500) {
           this.phase = 'finalExplosion'
           this.phaseStartTime = currentTime
           this.explodeText()
@@ -547,7 +575,7 @@ class SkyOfWishesEngine {
         break
         
       case 'finalExplosion':
-        if (elapsed > 1000) {
+        if (elapsed > 800) {
           this.phase = 'celebration'
           this.phaseStartTime = currentTime
           this.triggerFireworks()
@@ -572,7 +600,7 @@ class SkyOfWishesEngine {
       window.innerWidth / 2, window.innerHeight * 0.4, 0,
       window.innerWidth / 2, window.innerHeight * 0.4, window.innerWidth * 0.7
     )
-    hazeGradient.addColorStop(0, 'rgba(56, 36, 92, 0.3)')
+    hazeGradient.addColorStop(0, 'rgba(56, 36, 92, 0.2)')
     hazeGradient.addColorStop(1, 'transparent')
     
     this.ctx.fillStyle = hazeGradient
@@ -626,7 +654,7 @@ export function SkyOfWishes({ wishText, onComplete }: SkyOfWishesProps) {
         setTimeout(() => beep(1320, 0.5, 'sine', 0.1), 400)
         
         // Show continue button after celebration
-        setTimeout(() => setShowContinue(true), 5000)
+        setTimeout(() => setShowContinue(true), 4000)
       }
     })
     
@@ -671,36 +699,8 @@ export function SkyOfWishes({ wishText, onComplete }: SkyOfWishesProps) {
         className={styles.roomOverlay}
         initial={{ opacity: 1 }}
         animate={{ opacity: 0 }}
-        transition={{ duration: 3, ease: 'easeInOut' }}
+        transition={{ duration: 2.5, ease: 'easeInOut' }}
       />
-      
-      {/* Phase indicators */}
-      <AnimatePresence>
-        {currentPhase === 'holdingHappy' && (
-          <motion.div
-            className={styles.phaseText}
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 1.2 }}
-            transition={{ duration: 0.5 }}
-          >
-            <h2 className={styles.birthdayText}>Happy Birthday</h2>
-          </motion.div>
-        )}
-        
-        {currentPhase === 'holdingArfa' && (
-          <motion.div
-            className={styles.phaseText}
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 1.2 }}
-            transition={{ duration: 0.5 }}
-          >
-            <h1 className={styles.arfaText}>Arfa</h1>
-            <p className={styles.wishText}>{wishText}</p>
-          </motion.div>
-        )}
-      </AnimatePresence>
       
       {/* Continue button */}
       <AnimatePresence>
