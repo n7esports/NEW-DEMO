@@ -23,9 +23,9 @@ export function Page1({ onComplete }: Page1Props) {
   // to blow out.
   const handleAssembled = useCallback(() => setAssembled(true), [])
 
-  const handleBlowOut = () => {
+    const handleBlowOut = () => {
     setPhase('blowOut')
-    window.setTimeout(() => setPhase('balloons'), 1600)
+    window.setTimeout(() => setPhase('clawMachine'), 1600)
   }
 
   const showCakeScene = phase === 'cakeAssembly' || phase === 'blowOut'
