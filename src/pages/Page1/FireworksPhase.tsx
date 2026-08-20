@@ -100,24 +100,6 @@ export function FireworksPhase({ onComplete }: FireworksPhaseProps) {
   return (
     <div className={styles.wrap}>
       <canvas ref={canvasRef} className={styles.canvas} />
-      <div className={styles.balloonRow} aria-hidden="true">
-        {BALLOON_COLORS.map((color, i) => (
-          <span
-            key={i}
-            className={styles.decorBalloon}
-            style={{ left: `${6 + i * 13}%`, animationDelay: `${i * 0.35}s`, background: color }}
-          />
-        ))}
-      </div>
-      <button type="button" className={styles.skip} onClick={onComplete}>
-        Skip →
-      </button>
-    </div>
-  )
-}
-  return (
-    <div className={styles.wrap}>
-      <canvas ref={canvasRef} className={styles.canvas} />
 
       <h1 className={styles.celebrationTitle} aria-hidden="true">
         {'Happy Birthday'.split('').map((char, i) => (
@@ -145,3 +127,4 @@ export function FireworksPhase({ onComplete }: FireworksPhaseProps) {
       </button>
     </div>
   )
+}
