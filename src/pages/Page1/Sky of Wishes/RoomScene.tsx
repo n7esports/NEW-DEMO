@@ -1,6 +1,7 @@
 'use client'
 
 import { useMemo, useRef } from 'react'
+import styles from './RoomScene.module.css'
 import * as THREE from 'three'
 import { Canvas, useFrame } from '@react-three/fiber'
 import { Environment, OrbitControls } from '@react-three/drei'
@@ -762,16 +763,11 @@ export default function RoomScene({
   interactive = false,
 }: RoomSceneProps) {
   return (
-    <div
-      style={{
-        position: 'absolute',
-        inset: 0,
-        width: '100%',
-        height: '100%',
-        overflow: 'hidden',
-      }}
-    >
-
+   <div className={styles.roomScene}>
+     
+     <div className={styles.canvas}>
+  <Canvas
+    
       <Canvas
         shadows
         dpr={[1, 2]}
@@ -866,6 +862,7 @@ export default function RoomScene({
         />
 
       </Canvas>
+     </div>
 
     </div>
   )
