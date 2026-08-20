@@ -6,6 +6,31 @@ import * as THREE from 'three'
 import { Canvas, useFrame } from '@react-three/fiber'
 import { Environment, OrbitControls } from '@react-three/drei'
 
+/*
+ * React/TypeScript can lose React Three Fiber's JSX intrinsic-element
+ * declarations depending on the installed React + R3F type versions.
+ * These declarations keep this scene compatible with the project's
+ * current TypeScript setup without changing the runtime behavior.
+ */
+declare global {
+  namespace JSX {
+    interface IntrinsicElements {
+      group: any
+      mesh: any
+      pointLight: any
+      color: any
+      ambientLight: any
+      hemisphereLight: any
+      boxGeometry: any
+      cylinderGeometry: any
+      sphereGeometry: any
+      meshBasicMaterial: any
+      meshStandardMaterial: any
+      meshPhysicalMaterial: any
+    }
+  }
+}
+
 interface RoomSceneProps {
   transitionProgress?: number
   interactive?: boolean
@@ -671,7 +696,7 @@ function CinematicCamera({
 }: {
   transitionProgress: number
 }) {
-  useFrame(({ camera }) => {
+  useFrame(({ camera }: { camera: THREE.Camera }) => {
     const progress = THREE.MathUtils.clamp(
       transitionProgress,
       0,
