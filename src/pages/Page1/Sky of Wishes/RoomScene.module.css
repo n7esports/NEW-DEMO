@@ -492,4 +492,9 @@
     transition: none;
     animation: none;
   }
+
+  .exiting {
+    animation: none;
+    opacity: 0;
+  }
 }

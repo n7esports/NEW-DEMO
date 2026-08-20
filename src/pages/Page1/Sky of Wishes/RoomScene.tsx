@@ -133,7 +133,7 @@ function RoomInterior({ transitionProgress }: RoomInteriorProps) {
    * 0.5 = camera leaving room
    * 1   = room almost completely gone
    */
-  useFrame((state, delta) => {
+  useFrame((state: { clock: THREE.Clock }, delta: number) => {
     if (!groupRef.current) return
 
     const progress = THREE.MathUtils.clamp(
