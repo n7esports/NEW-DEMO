@@ -38,17 +38,18 @@ const CakeAssembly: React.FC<CakeAssemblyProps> = ({ onAssembled, blown = false 
 
         {/* ===== CAKE SVG - LAYERS BOTTOM TO TOP ===== */}
         <svg
-          id="cake"
-          version="1.1"
-          x="0px"
-          y="0px"
-          width="200px"
-          height="500px"
-          viewBox="0 0 200 500"
-          enableBackground="new 0 0 200 500"
-          xmlSpace="preserve"
-          className={styles.cake}
-        >
+  id="cake"
+  version="1.1"
+  x="0px"
+  y="0px"
+  width="200px"
+  height="500px"
+  viewBox="0 0 200 500"
+  enableBackground="new 0 0 200 500"
+  xmlSpace="preserve"
+  overflow="hidden"
+  className={styles.cake}
+>
           {/* ===== LAYER 1: PLATE (BOTTOM) ===== */}
           <rect x="10" y={475.571} fill="#fefae9" width={180} height={4} />
 
