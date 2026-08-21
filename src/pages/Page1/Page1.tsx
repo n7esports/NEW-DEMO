@@ -18,10 +18,7 @@ import { BIRTHDAY_TARGET } from '../../config'
 import { CountdownPhase } from './CountdownPhase'
 import { FireworksPhase } from './FireworksPhase'
 import CakeAssembly from './CakeAssembly'
-
-import RoomScene from './Sky of Wishes/RoomScene'
-import SkyOfWishes from './Sky of Wishes/SkyOfWishes'
-import { useSkyTransition } from './Sky of Wishes/useSkyTransition'
+import WishMoment from './WishMoment'
 
 import type { Page1State } from './types'
 
@@ -61,23 +58,6 @@ export function Page1({
 
   /*
    * ==========================================================
-   * SKY TRANSITION
-   * ==========================================================
-   */
-
-  const skyTransition =
-    useSkyTransition({
-      duration: 6500,
-
-      autoStart:
-        phase === 'skyOfWishes',
-
-      onComplete,
-    })
-
-
-  /*
-   * ==========================================================
    * CAKE ASSEMBLED
    * ==========================================================
    */
@@ -104,7 +84,7 @@ export function Page1({
 
       blowOutTimeoutRef.current =
         window.setTimeout(() => {
-          setPhase('skyOfWishes')
+          setPhase('wishMoment')
           blowOutTimeoutRef.current = null
         }, 1600)
     }, [])
@@ -218,94 +198,11 @@ export function Page1({
 
 
       {/* ======================================================
-          SKY OF WISHES
+          WISH MOMENT
       ====================================================== */}
 
-      {phase ===
-        'skyOfWishes' && (
-        <div
-          className={
-            styles.skyScene
-          }
-        >
-
-          {/* ==================================================
-              ROOM
-          ================================================== */}
-
-          <div
-            className={
-              styles.roomLayer
-            }
-            style={{
-              opacity:
-                1 -
-                skyTransition.progress,
-              pointerEvents:
-                skyTransition
-                  .isRoomVisible
-                  ? 'auto'
-                  : 'none',
-            }}
-          >
-            <RoomScene
-              transitionProgress={
-                skyTransition.progress
-              }
-            />
-          </div>
-
-
-          {/* ==================================================
-              SKY
-          ================================================== */}
-
-          <div
-            className={
-              styles.skyLayer
-            }
-            style={{
-              opacity:
-                skyTransition.progress,
-              pointerEvents:
-                'none',
-            }}
-          >
-            <SkyOfWishes
-              transitionProgress={
-                skyTransition.progress
-              }
-              active={
-                skyTransition
-                  .isSkyVisible
-              }
-              onComplete={
-                undefined
-              }
-            />
-          </div>
-
-
-          {/* ==================================================
-              CINEMATIC TRANSITION FLASH
-          ================================================== */}
-
-          <div
-            className={
-              styles.transitionFlash
-            }
-            style={{
-              opacity:
-                skyTransition
-                  .progress > 0.38 &&
-                skyTransition
-                  .progress < 0.58
-                  ? 0.12
-                  : 0,
-            }}
-          />
-
-        </div>
+      {phase === 'wishMoment' && (
+        <WishMoment onComplete={onComplete} />
       )}
 
     </div>
