@@ -1,34 +1,50 @@
 .page {
   position: relative;
   width: 100%;
-  min-height: 100dvh;
-  /* Was `overflow: hidden`, which permanently clipped and made
-     unreachable any content taller than the viewport (e.g. the cake +
-     "Blow the Candle" button on short phone screens) with no way to
-     scroll to it. Allow vertical scrolling as a safety net while still
-     preventing any accidental horizontal scroll/glitch. */
-  overflow-x: hidden;
-  overflow-y: auto;
+  height: 100dvh;
+  overflow: hidden;
 }
 
 .cakeScene {
   position: relative;
-  min-height: 100dvh;
+  height: 100%;
   width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: var(--spacing-2xl);
-  padding: var(--spacing-2xl) var(--spacing-xl);
-  /* Same reasoning as .page above: never hard-clip the cake/candle/CTA. */
-  overflow: visible;
+  gap: clamp(12px, 3vh, var(--spacing-2xl));
+  padding: var(--spacing-lg) var(--spacing-xl);
+  overflow: hidden;
+}
+
+.cta {
+  position: relative;
+  z-index: 5;
+  flex-shrink: 0;
+  background: linear-gradient(135deg, var(--color-accent-pink), var(--color-accent-magenta));
+  border: none;
+  color: white;
+  font-weight: 700;
+  font-size: 17px;
+  padding: 14px 36px;
+  border-radius: 999px;
+  cursor: pointer;
+  box-shadow: 0 0 40px rgba(255, 117, 160, 0.35);
+  transition: transform 0.2s ease;
+  pointer-events: auto;
+}
+
+.cta:hover {
+  transform: translateY(-2px);
+}
+
+.cta:active {
+  transform: scale(0.96);
 }
 
 /* ======================================================
    SKY OF WISHES WRAPPER LAYERS
-   (previously referenced from Page1.tsx but missing here,
-   so these divs rendered with no positioning at all)
 ====================================================== */
 
 .skyScene {
@@ -60,28 +76,4 @@
   background: #fff;
   pointer-events: none;
   transition: opacity 0.3s ease;
-}
-
-.cta {
-  position: relative;
-  z-index: 5;
-  background: linear-gradient(135deg, var(--color-accent-pink), var(--color-accent-magenta));
-  border: none;
-  color: white;
-  font-weight: 700;
-  font-size: 17px;
-  padding: 14px 36px;
-  border-radius: 999px;
-  cursor: pointer;
-  box-shadow: 0 0 40px rgba(255, 117, 160, 0.35);
-  transition: transform 0.2s ease;
-  pointer-events: auto;
-}
-
-.cta:hover {
-  transform: translateY(-2px);
-}
-
-.cta:active {
-  transform: scale(0.96);
 }
