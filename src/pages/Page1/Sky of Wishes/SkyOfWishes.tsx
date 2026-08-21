@@ -190,6 +190,17 @@ export default function SkyOfWishes({
       dpr: 1,
     })
 
+  // Page1 updates transitionProgress every animation frame. Keep that value
+  // in a ref so the canvas loop does not tear down and restart on every tick.
+  const transitionProgressRef =
+    useRef(transitionProgress)
+
+  transitionProgressRef.current =
+    transitionProgress
+
+  const completionCalledRef =
+    useRef(false)
+
   const [reducedMotion, setReducedMotion] =
     useState(false)
 
@@ -1244,6 +1255,9 @@ export default function SkyOfWishes({
     startTimeRef.current =
       performance.now()
 
+    completionCalledRef.current =
+      false
+
     let lastTime =
       performance.now()
 
@@ -1274,6 +1288,9 @@ export default function SkyOfWishes({
         width,
         height,
       } = dimensionsRef.current
+
+      const progress =
+        transitionProgressRef.current
 
       /*
        * Clear canvas.
@@ -1326,7 +1343,7 @@ export default function SkyOfWishes({
        */
       const starVisibility =
         clamp(
-          transitionProgress *
+          progress *
             1.8,
           0,
           1,
@@ -1371,7 +1388,7 @@ export default function SkyOfWishes({
        * has mostly transitioned away.
        */
       if (
-        transitionProgress > 0.55 &&
+        progress > 0.55 &&
         !textCreated
       ) {
         const fontSize =
@@ -1516,7 +1533,7 @@ export default function SkyOfWishes({
       ====================================================== */
 
       if (
-        transitionProgress > 0.35
+        progress > 0.35
       ) {
         const spawnCount =
           reducedMotion
@@ -1595,7 +1612,7 @@ export default function SkyOfWishes({
       ====================================================== */
 
       if (
-        transitionProgress > 0.75 &&
+        progress > 0.75 &&
         !reducedMotion
       ) {
         fireworkTimer += delta
@@ -1744,7 +1761,7 @@ export default function SkyOfWishes({
       ====================================================== */
 
       if (
-        transitionProgress > 0.8
+        progress > 0.8
       ) {
         petalTimer += delta
 
@@ -1827,7 +1844,7 @@ export default function SkyOfWishes({
       ====================================================== */
 
       if (
-        transitionProgress >
+        progress >
         0.65
       ) {
         for (
@@ -1882,7 +1899,7 @@ export default function SkyOfWishes({
 
       if (
         finale > 0 &&
-        transitionProgress >
+        progress >
           0.8
       ) {
         ctx.save()
@@ -1937,8 +1954,10 @@ export default function SkyOfWishes({
 
       if (
         elapsed > 11000 &&
-        onComplete
+        onComplete &&
+        !completionCalledRef.current
       ) {
+        completionCalledRef.current = true
         onComplete()
       }
 
@@ -1975,7 +1994,6 @@ export default function SkyOfWishes({
   }, [
     active,
     reducedMotion,
-    transitionProgress,
     onComplete,
   ])
 

@@ -714,13 +714,14 @@ function CinematicCamera({
 
     /*
      * Final position outside/above the room.
-     *
-     * SkyOfWishes will take over after this point.
+     * The previous z endpoint (1.5) was still inside the room, so on both
+     * desktop and narrow phone aspect ratios the camera looked like it
+     * stopped before actually leaving through the window.
      */
     const endPosition = new THREE.Vector3(
       0,
-      10,
-      1.5,
+      7.5,
+      -7.5,
     )
 
     /*
@@ -743,12 +744,12 @@ function CinematicCamera({
       0,
       THREE.MathUtils.lerp(
         2.2,
-        8.5,
+        9.5,
         eased,
       ),
       THREE.MathUtils.lerp(
         -3.5,
-        -8,
+        -10.5,
         eased,
       ),
     )
@@ -765,10 +766,13 @@ function CinematicCamera({
     const perspectiveCamera =
       camera as THREE.PerspectiveCamera
 
+    const isPortrait =
+      perspectiveCamera.aspect < 0.82
+
     perspectiveCamera.fov =
       THREE.MathUtils.lerp(
-        52,
-        68,
+        isPortrait ? 58 : 52,
+        isPortrait ? 72 : 68,
         eased,
       )
 
@@ -796,7 +800,7 @@ export default function RoomScene({
       <div className={styles.canvas}>
         <Canvas
           shadows
-          dpr={[1, 2]}
+          dpr={[1, 1.5]}
           camera={{
             position: [0, 1.1, 8.8],
             fov: 52,

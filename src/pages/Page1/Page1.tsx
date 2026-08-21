@@ -2,6 +2,8 @@
 
 import {
   useCallback,
+  useEffect,
+  useRef,
   useState,
 } from 'react'
 
@@ -45,6 +47,17 @@ export function Page1({
   const [assembled, setAssembled] =
     useState(false)
 
+  const blowOutTimeoutRef =
+    useRef<number | null>(null)
+
+  useEffect(() => {
+    return () => {
+      if (blowOutTimeoutRef.current !== null) {
+        window.clearTimeout(blowOutTimeoutRef.current)
+      }
+    }
+  }, [])
+
 
   /*
    * ==========================================================
@@ -85,9 +98,15 @@ export function Page1({
     useCallback(() => {
       setPhase('blowOut')
 
-      window.setTimeout(() => {
-        setPhase('skyOfWishes')
-      }, 1600)
+      if (blowOutTimeoutRef.current !== null) {
+        window.clearTimeout(blowOutTimeoutRef.current)
+      }
+
+      blowOutTimeoutRef.current =
+        window.setTimeout(() => {
+          setPhase('skyOfWishes')
+          blowOutTimeoutRef.current = null
+        }, 1600)
     }, [])
 
 

@@ -51,7 +51,7 @@ const CakeAssembly: React.FC<CakeAssemblyProps> = ({ onAssembled, blown = false 
   className={styles.cake}
 >
           {/* ===== LAYER 1: PLATE (BOTTOM) ===== */}
-          <rect x="10" y={475.571} fill="#fefae9" width={180} height={4} />
+          <rect className={styles.plate} x="10" y={475.571} fill="#fefae9" width={180} height={4} />
 
           {/* ===== LAYER 2: BASE CAKE (bizcocho_1) ===== */}
           <path
