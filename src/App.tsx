@@ -21,9 +21,9 @@ function Router() {
 
   return (
     <div className={styles.placeholder}>
-      <p className={styles.placeholderEmoji}>🚧</p>
-      <h1>Page {currentPage} is coming soon</h1>
-      <p>The letter and finale are built next.</p>
+      <p className={styles.placeholderEmoji}>🎂</p>
+      <h1>The celebration is complete ✨</h1>
+      <p>Thank you for being part of this little birthday experience.</p>
       <button type="button" className={styles.replayBtn} onClick={() => dispatch({ type: 'SET_STATE', payload: 'page1-countdown' })}>
         ↺ Replay Page 1
       </button>

@@ -22,7 +22,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  overflow: hidden;
+  overflow: visible;
 }
 
 @media (max-width: 768px) {
@@ -43,6 +43,49 @@
   width: 100%;
   height: 100%;
   overflow: visible;
+}
+
+
+/* Keep the SVG's original SMIL build untouched, but hide each path's static
+   pre-animation shape. This prevents the top cream/white chocolate from
+   flashing into view on narrow phone layouts before its SMIL sequence starts. */
+.layerBase,
+.layerFill1,
+.layerCake2,
+.layerFill2,
+.layerCake3,
+.layerCream {
+  opacity: 0;
+}
+
+.layerBase {
+  animation: svgLayerReveal 50ms 0.2s linear forwards;
+}
+
+.layerFill1 {
+  animation: svgLayerReveal 50ms 1s linear forwards;
+}
+
+.layerCake2 {
+  animation: svgLayerReveal 50ms 1.5s linear forwards;
+}
+
+.layerFill2 {
+  animation: svgLayerReveal 50ms 2s linear forwards;
+}
+
+.layerCake3 {
+  animation: svgLayerReveal 50ms 2.5s linear forwards;
+}
+
+.layerCream {
+  animation: svgLayerReveal 50ms 2.9s linear forwards;
+}
+
+@keyframes svgLayerReveal {
+  to {
+    opacity: 1;
+  }
 }
 
 .plate {

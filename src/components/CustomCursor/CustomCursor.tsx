@@ -20,6 +20,7 @@ export function CustomCursor({ trailLength = 12 }: CustomCursorProps) {
   const dotRef = useRef<HTMLDivElement>(null)
   const [sparkles, setSparkles] = useState<Sparkle[]>([])
   const lastSpawn = useRef(0)
+  const cleanupTimersRef = useRef<number[]>([])
 
   useEffect(() => {
     if (prefersReducedMotion) return
@@ -35,14 +36,20 @@ export function CustomCursor({ trailLength = 12 }: CustomCursorProps) {
         lastSpawn.current = now
         const id = sparkleId++
         setSparkles((prev) => [...prev.slice(-trailLength), { id, x: e.clientX, y: e.clientY }])
-        window.setTimeout(() => {
+        const timer = window.setTimeout(() => {
           setSparkles((prev) => prev.filter((s) => s.id !== id))
+          cleanupTimersRef.current = cleanupTimersRef.current.filter((t) => t !== timer)
         }, 700)
+        cleanupTimersRef.current.push(timer)
       }
     }
 
     window.addEventListener('mousemove', handleMove)
-    return () => window.removeEventListener('mousemove', handleMove)
+    return () => {
+      window.removeEventListener('mousemove', handleMove)
+      cleanupTimersRef.current.forEach((timer) => window.clearTimeout(timer))
+      cleanupTimersRef.current = []
+    }
   }, [prefersReducedMotion, trailLength])
 
   if (prefersReducedMotion) return null

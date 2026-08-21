@@ -1,4 +1,5 @@
 import { useRef, useState } from 'react'
+import type { MouseEvent, PointerEvent } from 'react'
 import styles from './NoButton.module.css'
 
 export interface NoButtonProps {
@@ -19,15 +20,30 @@ export function NoButton({ onDodge }: NoButtonProps) {
     onDodge?.()
   }
 
+  const handlePointerEnter = (event: PointerEvent<HTMLButtonElement>) => {
+    if (event.pointerType === 'mouse') dodge()
+  }
+
+  const handlePointerDown = (event: PointerEvent<HTMLButtonElement>) => {
+    if (event.pointerType !== 'mouse') dodge()
+  }
+
+  const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
+    // detail === 0 is a keyboard activation (Enter/Space). Pointer/touch
+    // interactions are handled by the pointer handlers above so they do not
+    // dodge twice on mobile browsers.
+    if (event.detail === 0) dodge()
+  }
+
   return (
     <button
       ref={btnRef}
       type="button"
       className={styles.noButton}
       style={pos ? { position: 'fixed', left: pos.x, top: pos.y } : undefined}
-      onMouseEnter={dodge}
-      onClick={dodge}
-      onTouchStart={dodge}
+      onPointerEnter={handlePointerEnter}
+      onPointerDown={handlePointerDown}
+      onClick={handleClick}
     >
       NO...
     </button>

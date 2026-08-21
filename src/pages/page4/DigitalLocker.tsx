@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { motion } from 'framer-motion'
 import { useBeep } from '../../hooks/useBeep'
 import { GlassPanel } from '../../components/GlassPanel/GlassPanel'
@@ -23,6 +23,13 @@ export function DigitalLocker({ passcode, onUnlock }: DigitalLockerProps) {
   const [error, setError] = useState('')
   const [shake, setShake] = useState(false)
   const { beep } = useBeep()
+  const resetTimeoutRef = useRef<number | null>(null)
+
+  useEffect(() => {
+    return () => {
+      if (resetTimeoutRef.current !== null) window.clearTimeout(resetTimeoutRef.current)
+    }
+  }, [])
 
   const handleKeyPress = (key: string) => {
     if (shake) return
@@ -49,9 +56,11 @@ export function DigitalLocker({ passcode, onUnlock }: DigitalLockerProps) {
         setShake(true)
         setError(WRONG_CODE_MESSAGES[Math.floor(Math.random() * WRONG_CODE_MESSAGES.length)])
         beep(180, 0.25, 'sawtooth', 0.12)
-        window.setTimeout(() => {
+        if (resetTimeoutRef.current !== null) window.clearTimeout(resetTimeoutRef.current)
+        resetTimeoutRef.current = window.setTimeout(() => {
           setShake(false)
           setInput('')
+          resetTimeoutRef.current = null
         }, 500)
       }
     }

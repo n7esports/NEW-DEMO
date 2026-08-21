@@ -251,11 +251,9 @@ export default function SkyOfWishes({
     if (!ctx) return
 
     const resize = () => {
-      const width =
-        window.innerWidth
-
-      const height =
-        window.innerHeight
+      const viewport = window.visualViewport
+      const width = viewport?.width ?? window.innerWidth
+      const height = viewport?.height ?? window.innerHeight
 
       const dpr = Math.min(
         window.devicePixelRatio || 1,
@@ -299,11 +297,15 @@ export default function SkyOfWishes({
       resize,
     )
 
+    const visualViewport = window.visualViewport
+    visualViewport?.addEventListener('resize', resize)
+
     return () => {
       window.removeEventListener(
         'resize',
         resize,
       )
+      visualViewport?.removeEventListener('resize', resize)
     }
   }, [])
 

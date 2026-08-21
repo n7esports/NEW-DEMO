@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import { useBeep } from '../../hooks/useBeep'
 import type { Balloon } from './types'
@@ -48,16 +48,32 @@ export function BalloonsPhase({ wishText, onComplete }: BalloonsPhaseProps) {
   const [showPolaroid, setShowPolaroid] = useState(false)
   const { beep } = useBeep()
   const prefersReducedMotion = useReducedMotion()
+  const timersRef = useRef<number[]>([])
+
+  useEffect(() => {
+    return () => {
+      timersRef.current.forEach((timer) => window.clearTimeout(timer))
+      timersRef.current = []
+    }
+  }, [])
 
   const handlePop = (balloon: Balloon) => {
     if (balloon.popped) return
     setBalloons((prev) => prev.map((b) => (b.id === balloon.id ? { ...b, popped: true } : b)))
     beep(520, 0.12, 'square', 0.1)
     if (balloon.id === WISH_BALLOON_ID) {
-      window.setTimeout(() => setShowPolaroid(true), 350)
+      const timer = window.setTimeout(() => {
+        setShowPolaroid(true)
+        timersRef.current = timersRef.current.filter((t) => t !== timer)
+      }, 350)
+      timersRef.current.push(timer)
     } else {
       setToast(balloon.wishText ?? '')
-      window.setTimeout(() => setToast(null), 1800)
+      const timer = window.setTimeout(() => {
+        setToast(null)
+        timersRef.current = timersRef.current.filter((t) => t !== timer)
+      }, 1800)
+      timersRef.current.push(timer)
     }
   }
 

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { motion } from 'framer-motion'
 import styles from './Envelope.module.css'
 
@@ -11,11 +11,21 @@ const OPEN_ANIMATION_MS = 900
 
 export function Envelope({ onOpen }: EnvelopeProps) {
   const [opening, setOpening] = useState(false)
+  const openTimerRef = useRef<number | null>(null)
+
+  useEffect(() => {
+    return () => {
+      if (openTimerRef.current !== null) window.clearTimeout(openTimerRef.current)
+    }
+  }, [])
 
   const handleClick = () => {
     if (opening) return
     setOpening(true)
-    window.setTimeout(onOpen, OPEN_ANIMATION_MS)
+    openTimerRef.current = window.setTimeout(() => {
+      openTimerRef.current = null
+      onOpen()
+    }, OPEN_ANIMATION_MS)
   }
 
   return (

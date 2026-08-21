@@ -720,8 +720,8 @@ function CinematicCamera({
      */
     const endPosition = new THREE.Vector3(
       0,
-      7.5,
-      -7.5,
+      8.2,
+      -9.5,
     )
 
     /*
@@ -800,7 +800,7 @@ export default function RoomScene({
       <div className={styles.canvas}>
         <Canvas
           shadows
-          dpr={[1, 1.5]}
+          dpr={[1, typeof window !== 'undefined' && window.innerWidth < 768 ? 1.25 : 1.5]}
           camera={{
             position: [0, 1.1, 8.8],
             fov: 52,

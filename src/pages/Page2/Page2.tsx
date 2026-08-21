@@ -31,6 +31,7 @@ export function Page2({ onComplete }: Page2Props) {
   const streamRef = useRef<MediaStream | null>(null)
   const stripRef = useRef<HTMLDivElement>(null)
   const dragId = useRef<string | null>(null)
+  const captureCancelledRef = useRef(false)
 
   const [phase, setPhase] = useState<BoothPhase>('intro')
   const [cameraError, setCameraError] = useState<string | null>(null)
@@ -41,6 +42,10 @@ export function Page2({ onComplete }: Page2Props) {
 
   const startCamera = useCallback(async () => {
     try {
+      if (!navigator.mediaDevices?.getUserMedia) {
+        setCameraError('Camera access is not supported by this browser.')
+        return
+      }
       const stream = await navigator.mediaDevices.getUserMedia({
         video: { facingMode: 'user', aspectRatio: 3 / 4 },
         audio: false,
@@ -57,8 +62,11 @@ export function Page2({ onComplete }: Page2Props) {
   }, [])
 
   useEffect(() => {
+    captureCancelledRef.current = false
     return () => {
+      captureCancelledRef.current = true
       streamRef.current?.getTracks().forEach((t) => t.stop())
+      streamRef.current = null
     }
   }, [])
 
@@ -98,27 +106,33 @@ export function Page2({ onComplete }: Page2Props) {
   }, [])
 
   const runCaptureSequence = useCallback(async () => {
+    if (phase !== 'live' || captureCancelledRef.current) return
     setPhase('capturing')
     const shots: string[] = []
     for (let shot = 0; shot < SHOT_COUNT; shot++) {
+      if (captureCancelledRef.current) return
       for (let c = 3; c >= 1; c--) {
+        if (captureCancelledRef.current) return
         setCountdown(c)
         beep(520, 0.08)
         await sleep(700)
       }
+      if (captureCancelledRef.current) return
       setCountdown(null)
       setFlash(true)
       beep(880, 0.1, 'triangle', 0.15)
       const dataUrl = capturePhoto()
       if (dataUrl) shots.push(dataUrl)
       await sleep(250)
+      if (captureCancelledRef.current) return
       setFlash(false)
       await sleep(500)
     }
+    if (captureCancelledRef.current) return
     setPhotos(shots)
     dispatch({ type: 'UPDATE_USER_DATA', payload: { photoStrip: shots } })
     setPhase('review')
-  }, [beep, capturePhoto, dispatch])
+  }, [beep, capturePhoto, dispatch, phase])
 
   const handleStickerDrag = (id: string, clientX: number, clientY: number) => {
     const strip = stripRef.current
@@ -144,6 +158,10 @@ export function Page2({ onComplete }: Page2Props) {
       ctx.fillRect(0, 0, canvas.width, canvas.height)
 
       let loaded = 0
+      if (photos.length === 0) {
+        resolve(canvas.toDataURL('image/png'))
+        return
+      }
       photos.forEach((src, i) => {
         const img = new Image()
         img.onload = () => {
