@@ -1,10 +1,64 @@
 'use client'
 
-import { useMemo, useRef } from 'react'
+import { Component, Suspense, useMemo, useRef } from 'react'
+import type { ReactNode } from 'react'
 import styles from './RoomScene.module.css'
 import * as THREE from 'three'
 import { Canvas, useFrame } from '@react-three/fiber'
-import { Environment, OrbitControls } from '@react-three/drei'
+import { OrbitControls } from '@react-three/drei'
+
+/*
+ * `@react-three/drei`'s <Environment preset="..."> fetches an HDRI file
+ * from a *remote* CDN (raw.githack.com) at runtime. That request is
+ * frequently blocked by CORS, ad-blockers, corporate proxies, or the CDN
+ * itself being flaky — and because there was no error boundary anywhere
+ * in the app, a failed fetch used to crash this entire Canvas (and take
+ * the whole "Sky of Wishes" scene down with it, showing a blank screen).
+ *
+ * We replace the network-dependent Environment with fully local lighting
+ * (see EnvironmentLights below) so this scene never depends on a 3rd
+ * party network request to render. A tiny local ErrorBoundary is kept
+ * around the Canvas as a last line of defense so that if anything inside
+ * ever throws, we fail gracefully instead of unmounting the app.
+ */
+class CanvasErrorBoundary extends Component<
+  { children: ReactNode },
+  { hasError: boolean }
+> {
+  state = { hasError: false }
+
+  static getDerivedStateFromError() {
+    return { hasError: true }
+  }
+
+  componentDidCatch(error: unknown) {
+    // Log for visibility during development; never let this crash the app.
+    // eslint-disable-next-line no-console
+    console.error('RoomScene failed to render, falling back gracefully:', error)
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return null
+    }
+    return this.props.children
+  }
+}
+
+/*
+ * Cheap, fully local stand-in for the remote HDRI environment map.
+ * Gives the metal/glass materials something to reflect without any
+ * network request.
+ */
+function EnvironmentLights() {
+  return (
+    <>
+      <pointLight position={[0, 4, 2]} intensity={0.6} color="#ffe3b3" />
+      <pointLight position={[-4, 2, -3]} intensity={0.35} color="#5d89ff" />
+      <pointLight position={[4, 1, -2]} intensity={0.3} color="#f5a6c8" />
+    </>
+  )
+}
 
 /*
  * React/TypeScript can lose React Three Fiber's JSX intrinsic-element
@@ -798,89 +852,90 @@ export default function RoomScene({
   return (
     <div className={styles.roomScene}>
       <div className={styles.canvas}>
-        <Canvas
-          shadows
-          dpr={[1, typeof window !== 'undefined' && window.innerWidth < 768 ? 1.25 : 1.5]}
-          camera={{
-            position: [0, 1.1, 8.8],
-            fov: 52,
-            near: 0.1,
-            far: 100,
-          }}
-          gl={{
-            antialias: true,
-            alpha: true,
-            powerPreference: 'high-performance',
-          }}
-        >
-          {/* =================================================
-              BACKGROUND
-          ================================================= */}
+        <CanvasErrorBoundary>
+          <Canvas
+            shadows
+            dpr={[1, typeof window !== 'undefined' && window.innerWidth < 768 ? 1.25 : 1.5]}
+            camera={{
+              position: [0, 1.1, 8.8],
+              fov: 52,
+              near: 0.1,
+              far: 100,
+            }}
+            gl={{
+              antialias: true,
+              alpha: true,
+              powerPreference: 'high-performance',
+            }}
+          >
+            {/* =================================================
+                BACKGROUND
+            ================================================= */}
 
-          <color
-            attach="background"
-            args={['#100b18']}
-          />
-
-          {/* =================================================
-              GLOBAL LIGHTING
-          ================================================= */}
-
-          <ambientLight
-            color="#4c3658"
-            intensity={0.65}
-          />
-
-          <hemisphereLight
-            args={[
-              '#46335f',
-              '#120d18',
-              0.7,
-            ]}
-          />
-
-          {/* =================================================
-              ROOM
-          ================================================= */}
-
-          <RoomInterior
-            transitionProgress={
-              transitionProgress
-            }
-          />
-
-          {/* =================================================
-              CINEMATIC CAMERA
-          ================================================= */}
-
-          <CinematicCamera
-            transitionProgress={
-              transitionProgress
-            }
-          />
-
-          {/* =================================================
-              OPTIONAL CONTROLS
-          ================================================= */}
-
-          {interactive && (
-            <OrbitControls
-              enablePan={false}
-              enableZoom={false}
-              minPolarAngle={Math.PI * 0.3}
-              maxPolarAngle={Math.PI * 0.65}
+            <color
+              attach="background"
+              args={['#100b18']}
             />
-          )}
 
-          {/* =================================================
-              ENVIRONMENT
-          ================================================= */}
+            {/* =================================================
+                GLOBAL LIGHTING
+            ================================================= */}
 
-          <Environment
-            preset="night"
-            environmentIntensity={0.25}
-          />
-        </Canvas>
+            <ambientLight
+              color="#4c3658"
+              intensity={0.65}
+            />
+
+            <hemisphereLight
+              args={[
+                '#46335f',
+                '#120d18',
+                0.7,
+              ]}
+            />
+
+            {/* =================================================
+                ROOM
+            ================================================= */}
+
+            <RoomInterior
+              transitionProgress={
+                transitionProgress
+              }
+            />
+
+            {/* =================================================
+                CINEMATIC CAMERA
+            ================================================= */}
+
+            <CinematicCamera
+              transitionProgress={
+                transitionProgress
+              }
+            />
+
+            {/* =================================================
+                OPTIONAL CONTROLS
+            ================================================= */}
+
+            {interactive && (
+              <OrbitControls
+                enablePan={false}
+                enableZoom={false}
+                minPolarAngle={Math.PI * 0.3}
+                maxPolarAngle={Math.PI * 0.65}
+              />
+            )}
+
+            {/* =================================================
+                ENVIRONMENT (local lights only — no network fetch)
+            ================================================= */}
+
+            <Suspense fallback={null}>
+              <EnvironmentLights />
+            </Suspense>
+          </Canvas>
+        </CanvasErrorBoundary>
       </div>
     </div>
   )

@@ -475,6 +475,10 @@ export default function SkyOfWishes({
       )
 
     if (!offCtx) return []
+    // Guard against being called before the canvas has been sized
+    // (dimensionsRef starts at 0x0 until the resize effect runs) —
+    // getImageData throws on a zero-sized rect.
+    if (!width || !height) return []
 
     offscreen.width = width
     offscreen.height = height
@@ -1391,7 +1395,9 @@ export default function SkyOfWishes({
        */
       if (
         progress > 0.55 &&
-        !textCreated
+        !textCreated &&
+        width > 0 &&
+        height > 0
       ) {
         const fontSize =
           width < 768
