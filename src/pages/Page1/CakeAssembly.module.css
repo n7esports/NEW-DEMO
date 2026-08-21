@@ -8,16 +8,24 @@
   justify-content: center;
   align-items: flex-end;
   width: 100%;
+  min-height: 0;
+  flex: 1 1 auto;
   overflow: visible;
 }
 
 /* Aspect-ratio-locked stage that scales the whole cake composition with the
    viewport instead of rendering it at a tiny fixed 200x500px. Percentage
    values on the candle/flame below are relative to this box, so they stay
-   correctly aligned to the cake at every size. */
+   correctly aligned to the cake at every size.
+
+   Bounded by BOTH viewport width and viewport height so the cake + candle
+   can never grow taller than the space actually available above the
+   "Blow the Candle" button — this is what was pushing the button into a
+   second, separately-scrollable section before. */
 .cakeWrapper {
   position: relative;
-  width: clamp(240px, 34vw, 460px);
+  width: clamp(200px, 34vw, 460px);
+  max-height: 52dvh;
   aspect-ratio: 200 / 500;
   display: flex;
   justify-content: center;
@@ -27,13 +35,15 @@
 
 @media (max-width: 768px) {
   .cakeWrapper {
-    width: clamp(200px, 52vw, 320px);
+    width: clamp(170px, 52vw, 320px);
+    max-height: 46dvh;
   }
 }
 
 @media (max-width: 420px) {
   .cakeWrapper {
-    width: clamp(170px, 62vw, 260px);
+    width: clamp(150px, 62vw, 260px);
+    max-height: 42dvh;
   }
 }
 
