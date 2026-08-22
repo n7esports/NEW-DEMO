@@ -1,5 +1,7 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
-import { motion } from 'framer-motion'
+import { useEffect, useRef, useState } from 'react'
+import type { ChangeEvent } from 'react'
+import type { CSSProperties } from 'react'
+import { useAppContext } from '../../context/AppContext'
 import { TRACKS } from './tracks'
 import styles from './Page3.module.css'
 
@@ -9,12 +11,11 @@ export interface Page3Props {
 
 function formatTime(seconds: number): string {
   if (!Number.isFinite(seconds) || seconds < 0) return '0:00'
-  const m = Math.floor(seconds / 60)
-  const s = Math.floor(seconds % 60)
-  return `${m}:${String(s).padStart(2, '0')}`
+  return `${Math.floor(seconds / 60)}:${String(Math.floor(seconds % 60)).padStart(2, '0')}`
 }
 
 export function Page3({ onComplete }: Page3Props) {
+  const { dispatch } = useAppContext()
   const [trackIndex, setTrackIndex] = useState(0)
   const [isPlaying, setIsPlaying] = useState(false)
   const [currentTime, setCurrentTime] = useState(0)
@@ -22,201 +23,121 @@ export function Page3({ onComplete }: Page3Props) {
   const [isShuffled, setIsShuffled] = useState(false)
   const [isRepeating, setIsRepeating] = useState(false)
   const [audioFailed, setAudioFailed] = useState(false)
-
   const audioRef = useRef<HTMLAudioElement>(null)
-  const activeLineRef = useRef<HTMLParagraphElement>(null)
-
   const track = TRACKS[trackIndex]
-  const hasRealAudio = Boolean(track.audioSrc) && !audioFailed
+  const hasRealAudio = Boolean(track.audioUrl) && !audioFailed
 
-  const goToTrack = (index: number) => {
-    const next = (index + TRACKS.length) % TRACKS.length
-    setTrackIndex(next)
+  const goToTrack = (index: number, shouldPlay = isPlaying) => {
+    setTrackIndex((index + TRACKS.length) % TRACKS.length)
     setCurrentTime(0)
     setAudioFailed(false)
+    setIsPlaying(shouldPlay)
   }
 
   const handleTrackEnd = () => {
     if (isRepeating) {
       setCurrentTime(0)
-      if (hasRealAudio && audioRef.current) audioRef.current.currentTime = 0
+      if (audioRef.current) audioRef.current.currentTime = 0
+      return
+    }
+    if (!isShuffled && trackIndex === TRACKS.length - 1) {
+      setIsPlaying(false)
+      setCurrentTime(0)
       return
     }
     const nextIndex = isShuffled ? Math.floor(Math.random() * TRACKS.length) : trackIndex + 1
-    if (nextIndex >= TRACKS.length && !isShuffled) {
-      setIsPlaying(false)
-      setCurrentTime(0)
-    } else {
-      goToTrack(nextIndex)
-    }
+    goToTrack(nextIndex)
   }
 
-  // Real <audio> element drives playback when a src is provided and loads successfully.
   useEffect(() => {
     const audio = audioRef.current
     if (!audio || !hasRealAudio) return
-    if (isPlaying) {
-      audio.play().catch(() => setAudioFailed(true))
-    } else {
-      audio.pause()
-    }
-  }, [isPlaying, hasRealAudio, trackIndex])
+    audio.volume = volume
+    if (isPlaying) audio.play().catch(() => setAudioFailed(true))
+    else audio.pause()
+  }, [isPlaying, hasRealAudio, trackIndex, volume])
 
-  useEffect(() => {
-    const audio = audioRef.current
-    if (audio) audio.volume = volume
-  }, [volume])
-
-  // Simulated clock so the whole player is previewable even with no audio files.
   useEffect(() => {
     if (!isPlaying || hasRealAudio) return
-    let raf = 0
+    let frame = 0
     let last = performance.now()
     const tick = (now: number) => {
       const delta = (now - last) / 1000
       last = now
-      setCurrentTime((t) => {
-        const next = t + delta
+      setCurrentTime((time) => {
+        const next = time + delta
         if (next >= track.duration) {
           handleTrackEnd()
           return 0
         }
         return next
       })
-      raf = requestAnimationFrame(tick)
+      frame = requestAnimationFrame(tick)
     }
-    raf = requestAnimationFrame(tick)
-    return () => cancelAnimationFrame(raf)
+    frame = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(frame)
+    // Track changes intentionally restart this preview clock.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isPlaying, hasRealAudio, track.duration])
 
-  const activeLineIndex = useMemo(() => {
-    return track.lyrics.findIndex((line, i) => {
-      const next = track.lyrics[i + 1]
-      return currentTime >= line.time && (!next || currentTime < next.time)
-    })
-  }, [track.lyrics, currentTime])
-
-  useEffect(() => {
-    activeLineRef.current?.scrollIntoView({ block: 'center', behavior: 'smooth' })
-  }, [activeLineIndex])
-
-  const handleSeek = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const time = Number(e.target.value)
+  const handleSeek = (event: ChangeEvent<HTMLInputElement>) => {
+    const time = Number(event.target.value)
     setCurrentTime(time)
-    if (hasRealAudio && audioRef.current) audioRef.current.currentTime = time
+    if (audioRef.current && hasRealAudio) audioRef.current.currentTime = time
   }
 
   return (
-    <div className={styles.page}>
-      <h1 className={styles.heading}>A Little Something to Play 🎵</h1>
+    <main className={styles.page}>
+      <header className={styles.header}>
+        <div>
+          <p className={styles.kicker}>Arfa FM · made for your mood</p>
+          <h1>Good songs for a good day.</h1>
+        </div>
+        <span className={styles.liveBadge}><i /> Listening room</span>
+      </header>
 
-      <div className={styles.playerGrid}>
+      <section className={styles.playerLayout}>
         <div className={styles.playerCard}>
-          <motion.div
-            className={styles.vinyl}
-            style={{ background: `radial-gradient(circle at 30% 30%, ${track.color}55, #111 70%)` }}
-            animate={{ rotate: isPlaying ? 360 : 0 }}
-            transition={{ duration: 3, ease: 'linear', repeat: isPlaying ? Infinity : 0 }}
-          >
-            <div className={styles.vinylLabel} style={{ background: track.color }} />
-          </motion.div>
-
-          <h2 className={styles.trackTitle}>{track.title}</h2>
-          <p className={styles.trackArtist}>{track.artist}</p>
-
-          {!track.audioSrc && (
-            <p className={styles.notice}>Previewing with a simulated clock — add a file to /public/audio to hear it for real.</p>
-          )}
-          {audioFailed && <p className={styles.notice}>Couldn't load that audio file — still previewing the sync.</p>}
-
-          <input
-            type="range"
-            className={styles.seek}
-            min={0}
-            max={track.duration}
-            step={0.1}
-            value={Math.min(currentTime, track.duration)}
-            onChange={handleSeek}
-          />
-          <div className={styles.timeRow}>
-            <span>{formatTime(currentTime)}</span>
-            <span>{formatTime(track.duration)}</span>
+          <div className={styles.artworkShell} style={{ '--track-color': track.color } as CSSProperties}>
+            <div className={styles.artworkGlow} />
+            <div className={`${styles.vinyl} ${isPlaying ? styles.spinning : ''}`}>
+              <img src={track.coverUrl} alt={`${track.title} cover`} />
+            </div>
           </div>
+          <div className={styles.trackInfo}>
+            <p className={styles.nowPlaying}>Now playing</p>
+            <h2>{track.title}</h2>
+            <p>{track.artist}</p>
+          </div>
+
+          <input className={styles.seek} type="range" min={0} max={track.duration} step={0.1} value={Math.min(currentTime, track.duration)} onChange={handleSeek} aria-label="Song progress" />
+          <div className={styles.timeRow}><span>{formatTime(currentTime)}</span><span>{formatTime(track.duration)}</span></div>
 
           <div className={styles.controls}>
-            <button
-              type="button"
-              className={`${styles.iconBtn} ${isShuffled ? styles.active : ''}`}
-              aria-label="Shuffle"
-              onClick={() => setIsShuffled((s) => !s)}
-            >
-              🔀
-            </button>
-            <button type="button" className={styles.iconBtn} aria-label="Previous track" onClick={() => goToTrack(trackIndex - 1)}>
-              ⏮
-            </button>
-            <button
-              type="button"
-              className={styles.playBtn}
-              aria-label={isPlaying ? 'Pause' : 'Play'}
-              onClick={() => setIsPlaying((p) => !p)}
-            >
-              {isPlaying ? '⏸' : '▶'}
-            </button>
-            <button type="button" className={styles.iconBtn} aria-label="Next track" onClick={() => goToTrack(trackIndex + 1)}>
-              ⏭
-            </button>
-            <button
-              type="button"
-              className={`${styles.iconBtn} ${isRepeating ? styles.active : ''}`}
-              aria-label="Repeat"
-              onClick={() => setIsRepeating((r) => !r)}
-            >
-              🔁
-            </button>
+            <button type="button" className={`${styles.controlButton} ${isShuffled ? styles.active : ''}`} onClick={() => setIsShuffled((value) => !value)} aria-label="Toggle shuffle">↝</button>
+            <button type="button" className={styles.controlButton} onClick={() => goToTrack(trackIndex - 1)} aria-label="Previous track">|◀</button>
+            <button type="button" className={styles.playButton} onClick={() => setIsPlaying((value) => !value)} aria-label={isPlaying ? 'Pause' : 'Play'}>{isPlaying ? 'Ⅱ' : '▶'}</button>
+            <button type="button" className={styles.controlButton} onClick={() => goToTrack(trackIndex + 1)} aria-label="Next track">▶|</button>
+            <button type="button" className={`${styles.controlButton} ${isRepeating ? styles.active : ''}`} onClick={() => setIsRepeating((value) => !value)} aria-label="Toggle repeat">↻</button>
           </div>
 
-          <div className={styles.volumeRow}>
-            <span aria-hidden="true">🔈</span>
-            <input
-              type="range"
-              min={0}
-              max={1}
-              step={0.01}
-              value={volume}
-              onChange={(e) => setVolume(Number(e.target.value))}
-              aria-label="Volume"
-            />
+          <label className={styles.volume}><span aria-hidden="true">◖</span><input type="range" min={0} max={1} step={0.01} value={volume} onChange={(event) => setVolume(Number(event.target.value))} aria-label="Volume" /><span aria-hidden="true">◗</span></label>
+          {!track.audioUrl && <p className={styles.notice}>Preview mode · add an audio file to this track to enable playback.</p>}
+          {audioFailed && <p className={styles.notice}>Audio file unavailable · continuing in preview mode.</p>}
+          {hasRealAudio && <audio ref={audioRef} src={track.audioUrl} onTimeUpdate={(event) => setCurrentTime(event.currentTarget.currentTime)} onEnded={handleTrackEnd} onError={() => setAudioFailed(true)} />}
+        </div>
+
+        <section className={styles.queue}>
+          <div className={styles.queueHeading}><div><p className={styles.kicker}>Keep the feeling going</p><h2>Some songs suggested for you</h2></div><span>{TRACKS.length} tracks</span></div>
+          <div className={styles.trackList}>
+            {TRACKS.map((item, index) => <button type="button" className={`${styles.trackItem} ${index === trackIndex ? styles.trackItemActive : ''}`} onClick={() => goToTrack(index, true)} key={item.id}><span className={styles.trackNumber}>{String(index + 1).padStart(2, '0')}</span><img src={item.coverUrl} alt="" /><span className={styles.trackText}><strong>{item.title}</strong><small>{item.artist}</small></span><span className={styles.trackPlay}>{index === trackIndex && isPlaying ? 'Ⅱ' : '▶'}</span></button>)}
           </div>
+        </section>
+      </section>
 
-          {track.audioSrc && (
-            <audio
-              ref={audioRef}
-              src={track.audioSrc}
-              onTimeUpdate={(e) => setCurrentTime(e.currentTarget.currentTime)}
-              onEnded={handleTrackEnd}
-              onError={() => setAudioFailed(true)}
-            />
-          )}
-        </div>
-
-        <div className={styles.lyricsCard}>
-          {track.lyrics.map((line, i) => (
-            <p
-              key={i}
-              ref={i === activeLineIndex ? activeLineRef : undefined}
-              className={i === activeLineIndex ? styles.lyricActive : styles.lyricInactive}
-            >
-              {line.text}
-            </p>
-          ))}
-        </div>
-      </div>
-
-      <button type="button" className={styles.continueBtn} onClick={onComplete}>
-        Continue →
-      </button>
-    </div>
+      <nav className={styles.bottomBar} aria-label="Page navigation"><button type="button" className={styles.backButton} onClick={() => dispatch({ type: 'PREV_PAGE' })}>← Back to Wish Board</button><button type="button" className={styles.nextButton} onClick={onComplete}>Next Page <span aria-hidden="true">→</span></button></nav>
+    </main>
   )
 }
+
+export default Page3
