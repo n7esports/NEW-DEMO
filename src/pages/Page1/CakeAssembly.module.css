@@ -24,26 +24,29 @@
    second, separately-scrollable section before. */
 .cakeWrapper {
   position: relative;
-  width: clamp(200px, 34vw, 460px);
-  max-height: 52dvh;
+  width: clamp(220px, 38vw, 720px);
+  max-height: 75dvh;
   aspect-ratio: 200 / 500;
   display: flex;
   justify-content: center;
   align-items: center;
   overflow: visible;
+  transform: translateY(-18%) scale(1.7);
+  transform-origin: center bottom;
+  z-index: 3;
 }
 
 @media (max-width: 768px) {
   .cakeWrapper {
-    width: clamp(170px, 52vw, 320px);
-    max-height: 46dvh;
+    width: clamp(180px, 58vw, 360px);
+    max-height: 50dvh;
   }
 }
 
 @media (max-width: 420px) {
   .cakeWrapper {
-    width: clamp(150px, 62vw, 260px);
-    max-height: 42dvh;
+    width: clamp(160px, 68vw, 300px);
+    max-height: 46dvh;
   }
 }
 
@@ -52,7 +55,55 @@
   position: relative;
   width: 100%;
   height: 100%;
+  z-index: 2;
   overflow: visible;
+}
+
+.blowEffect {
+  position: absolute;
+  top: 87%;
+  left: 50%;
+  width: 62%;
+  height: 12%;
+  transform: translate(-50%, 8%) scale(0.65);
+  border-radius: 50%;
+  opacity: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.blowEffect::before,
+.blowEffect::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border: 2px solid rgba(255, 193, 112, 0.7);
+  border-radius: 50%;
+  box-shadow: 0 0 24px rgba(255, 117, 160, 0.45);
+}
+
+.blowEffect::after {
+  inset: 18% -10%;
+  border-color: rgba(255, 117, 160, 0.5);
+  box-shadow: none;
+}
+
+.blown .blowEffect {
+  animation: blowEffect 1.55s ease-out forwards;
+}
+
+@keyframes blowEffect {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, 8%) scale(0.65);
+  }
+  18% {
+    opacity: 0.95;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, 18%) scale(1.35);
+  }
 }
 
 
@@ -69,27 +120,27 @@
 }
 
 .layerBase {
-  animation: svgLayerReveal 50ms 0.2s linear forwards;
+  animation: svgLayerReveal 50ms 1.2s linear forwards;
 }
 
 .layerFill1 {
-  animation: svgLayerReveal 50ms 1s linear forwards;
-}
-
-.layerCake2 {
-  animation: svgLayerReveal 50ms 1.5s linear forwards;
-}
-
-.layerFill2 {
   animation: svgLayerReveal 50ms 2s linear forwards;
 }
 
-.layerCake3 {
+.layerCake2 {
   animation: svgLayerReveal 50ms 2.5s linear forwards;
 }
 
+.layerFill2 {
+  animation: svgLayerReveal 50ms 3s linear forwards;
+}
+
+.layerCake3 {
+  animation: svgLayerReveal 50ms 3.5s linear forwards;
+}
+
 .layerCream {
-  animation: svgLayerReveal 50ms 2.9s linear forwards;
+  animation: svgLayerReveal 50ms 3.9s linear forwards;
 }
 
 @keyframes svgLayerReveal {
@@ -100,7 +151,7 @@
 
 .plate {
   opacity: 0;
-  animation: plateIn 350ms 4.15s ease-out forwards;
+  animation: plateIn 350ms 1s ease-out forwards;
 }
 
 @keyframes plateIn {
@@ -112,24 +163,35 @@
   }
 }
 
-/* ===== Candle =====
+/* ===== Candles =====
    Positioned as a percentage of the cake stage (not hardcoded pixels) so it
-   stays glued to the top of the frosting, centered, and in scale no matter
-   the viewport or cake size. */
-.candle {
+   stays glued to the top of the frosting, evenly spaced, and in scale no
+   matter the viewport or cake size. */
+.candleRow {
   position: absolute;
-  top: 75.6%;
+  top: 76%;
   left: 50%;
-  width: 2.6%;
-  height: 7%;
+  width: 13%;
+  height: 5.8%;
   transform: translateX(-50%);
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  z-index: 3;
+  pointer-events: none;
+}
+
+.candle {
+  position: relative;
+  width: 5.2%;
+  height: 82%;
   background: #ffffff;
   border-radius: 40%;
   backface-visibility: hidden;
   opacity: 0;
   /* Only starts once the SVG assembly sequence (which finishes at ~4.4s)
      has settled, so it never appears to float above an unfinished cake. */
-  animation: candleIn 500ms 4.6s ease-out forwards;
+  animation: candleIn 500ms 5.8s ease-out forwards;
   z-index: 3;
 }
 
@@ -143,7 +205,7 @@
   background: rgba(255, 0, 0, 0.45);
   opacity: 0;
   pointer-events: none;
-  animation: fadeIn 400ms 5.3s ease forwards;
+  animation: fadeIn 400ms 6.35s ease forwards;
 }
 
 .candle::before {
@@ -157,11 +219,11 @@
 @keyframes candleIn {
   0% {
     opacity: 0;
-    transform: translateX(-50%) translateY(-140%);
+    transform: translateY(-140%);
   }
   100% {
     opacity: 1;
-    transform: translateX(-50%) translateY(0);
+    transform: translateY(0);
   }
 }
 
@@ -188,13 +250,14 @@
   transform: translateX(-50%);
   border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
   opacity: 0;
-  animation: flicker 1.6s 5.4s ease-in-out infinite;
+  animation: flicker 1.6s 6.35s ease-in-out infinite;
   transition: opacity 0.4s ease;
 }
 
 .flameGroup.blown .flame {
   opacity: 0;
   animation: none;
+  transition: none;
 }
 
 /* A soft puff of smoke plays once when the candle is blown out. */

@@ -5,7 +5,7 @@ import styles from "./CakeAssembly.module.css";
 // (bizcocho_1 → relleno_1 → bizcocho_2 → relleno_2 → bizcocho_3 → crema),
 // used to time the candle/flame entrance and the onAssembled callback so
 // nothing appears before the cake itself has finished building.
-const SVG_ASSEMBLY_MS = 4400
+const SVG_ASSEMBLY_MS = 5400
 const CANDLE_SETTLE_MS = 900 // candle drop-in (500ms) + a little breathing room
 const FLAME_SETTLE_MS = 500 // flame fade-in after the candle lands
 
@@ -27,13 +27,19 @@ const CakeAssembly: React.FC<CakeAssemblyProps> = ({ onAssembled, blown = false 
   return (
     <div className={styles.container}>
       {/* ===== WRAPPER ===== */}
-      <div className={styles.cakeWrapper}>
-        {/* ===== CANDLE ===== */}
-        <div className={styles.candle}>
-          <div className={`${styles.flameGroup} ${blown ? styles.blown : ""}`}>
-            <div className={styles.flame} />
-            <div className={styles.smoke} />
-          </div>
+      <div className={`${styles.cakeWrapper} ${blown ? styles.blown : ""}`}>
+        <div className={styles.blowEffect} aria-hidden="true" />
+
+        {/* ===== CANDLES ===== */}
+        <div className={styles.candleRow}>
+          {Array.from({ length: 4 }, (_, index) => (
+            <div className={styles.candle} key={index}>
+              <div className={`${styles.flameGroup} ${blown ? styles.blown : ""}`}>
+                <div className={styles.flame} />
+                <div className={styles.smoke} />
+              </div>
+            </div>
+          ))}
         </div>
 
         {/* ===== CAKE SVG - LAYERS BOTTOM TO TOP ===== */}
@@ -64,7 +70,7 @@ const CakeAssembly: React.FC<CakeAssemblyProps> = ({ onAssembled, blown = false 
               attributeName="d"
               calcMode="spline"
               keySplines="0 0 1 1; 0 0 1 1; 0 0 1 1; 0.25 0 1 1; 0 0 1 1; 0.25 0 0.6 1"
-              begin="0.2s"
+              begin="1.2s"
               dur="0.8s"
               fill="freeze"
               values="

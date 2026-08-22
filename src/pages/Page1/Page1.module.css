@@ -18,6 +18,20 @@
   overflow: hidden;
 }
 
+.birthdayImage {
+  position: absolute;
+  top: 6%;
+  left: 50%;
+  z-index: 0;
+  width: min(92vw, 1100px);
+  max-height: 36vh;
+  object-fit: contain;
+  transform: translateX(-50%);
+  opacity: 1;
+  pointer-events: none;
+  filter: drop-shadow(0 0 24px rgba(252, 227, 138, 0.7));
+}
+
 .cta {
   position: relative;
   z-index: 5;

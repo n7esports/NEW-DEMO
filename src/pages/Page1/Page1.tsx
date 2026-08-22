@@ -2,8 +2,6 @@
 
 import {
   useCallback,
-  useEffect,
-  useRef,
   useState,
 } from 'react'
 
@@ -12,13 +10,12 @@ import {
   motion,
 } from 'framer-motion'
 
-import { useAppContext } from '../../context/AppContext'
 import { BIRTHDAY_TARGET } from '../../config'
 
 import { CountdownPhase } from './CountdownPhase'
 import { FireworksPhase } from './FireworksPhase'
 import CakeAssembly from './CakeAssembly'
-import WishMoment from './WishMoment'
+import { CelebrationPhase } from './CelebrationPhase'
 
 import type { Page1State } from './types'
 
@@ -33,9 +30,6 @@ export interface Page1Props {
 export function Page1({
   onComplete,
 }: Page1Props) {
-  const { userData } =
-    useAppContext()
-
   const [phase, setPhase] =
     useState<Page1State>(
       'countdown',
@@ -43,18 +37,6 @@ export function Page1({
 
   const [assembled, setAssembled] =
     useState(false)
-
-  const blowOutTimeoutRef =
-    useRef<number | null>(null)
-
-  useEffect(() => {
-    return () => {
-      if (blowOutTimeoutRef.current !== null) {
-        window.clearTimeout(blowOutTimeoutRef.current)
-      }
-    }
-  }, [])
-
 
   /*
    * ==========================================================
@@ -77,16 +59,6 @@ export function Page1({
   const handleBlowOut =
     useCallback(() => {
       setPhase('blowOut')
-
-      if (blowOutTimeoutRef.current !== null) {
-        window.clearTimeout(blowOutTimeoutRef.current)
-      }
-
-      blowOutTimeoutRef.current =
-        window.setTimeout(() => {
-          setPhase('wishMoment')
-          blowOutTimeoutRef.current = null
-        }, 1600)
     }, [])
 
 
@@ -168,6 +140,13 @@ export function Page1({
           }
         >
 
+          <img
+            className={styles.birthdayImage}
+            src="/Happy-Birthday.png"
+            alt=""
+            aria-hidden="true"
+          />
+
           <CakeAssembly
             onAssembled={
               handleAssembled
@@ -176,6 +155,10 @@ export function Page1({
               phase === 'blowOut'
             }
           />
+
+          {phase === 'blowOut' && (
+            <CelebrationPhase onComplete={onComplete} />
+          )}
 
           {assembled &&
             phase ===
@@ -196,14 +179,6 @@ export function Page1({
         </div>
       )}
 
-
-      {/* ======================================================
-          WISH MOMENT
-      ====================================================== */}
-
-      {phase === 'wishMoment' && (
-        <WishMoment onComplete={onComplete} />
-      )}
 
     </div>
   )
